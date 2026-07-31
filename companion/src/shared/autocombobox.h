@@ -72,7 +72,8 @@ class AutoComboBox : public QComboBox, public AutoWidget
     void setModel(QAbstractItemModel * model) override;
 
     // use for widget not bound to a memory address
-    void setValue(QVariant value, AbstractPanel * panel = nullptr, bool useFindData = true);
+    void setValue(QVariant value, AbstractPanel * panel, bool useFindData = true);
+    void setValue(QVariant value);
 
   signals:
     void currentDataChanged(int value);

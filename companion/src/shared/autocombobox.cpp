@@ -185,6 +185,12 @@ void AutoComboBox::setModel(QAbstractItemModel * model)
   }
 }
 
+void AutoComboBox::setValue(QVariant value)
+{
+  m_value = value;
+  updateValue();
+}
+
 void AutoComboBox::setValue(QVariant value, AbstractPanel * panel, bool useFindData)
 {
   setFieldInit(panel);
