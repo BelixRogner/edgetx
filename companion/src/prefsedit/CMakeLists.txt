@@ -4,7 +4,7 @@ project(prefsedit)
 set(${PROJECT_NAME}_NAMES
   prefs_panel
   prefs_edit
-  #prefs_app
+  prefs_app
   prefs_profile
   prefs_simu
   #prefs_update
