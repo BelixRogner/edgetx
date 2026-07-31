@@ -77,6 +77,14 @@ void AutoCheckBox::setInvert(bool invert)
   updateValue();
 }
 
+void AutoCheckBox::setValue(bool value)
+{
+  if (!m_field) {
+    m_value = value;
+    updateValue();
+  }
+}
+
 void AutoCheckBox::setValue(bool value, AbstractPanel * panel, bool invert)
 {
   if (!m_field) {

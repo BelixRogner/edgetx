@@ -41,7 +41,9 @@ class AutoCheckBox : public QCheckBox, public AutoWidget
     void setField(bool & field, AbstractPanel * panel = nullptr, bool invert = false);
     void setInvert(bool invert);
     // use for widget not bound to a memory address
-    void setValue(bool value, AbstractPanel * panel = nullptr, bool invert = false);
+    void setValue(bool value, AbstractPanel * panel, bool invert = false);
+    // use after initialised
+    void setValue(bool value);
 
   signals:
     void currentDataChanged(bool value);

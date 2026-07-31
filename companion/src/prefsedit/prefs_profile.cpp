@@ -380,7 +380,7 @@ void PrefsProfilePanel::populateFirmwareOptions(QStringList opts)
 
   if (!opts.size() && chkFirmwareBuildOpts.size()) {
     currOpts.clear();
-    QMutableMapIterator<QString, QCheckBox *> it(chkFirmwareBuildOpts);
+    QMutableMapIterator<QString, AutoCheckBox *> it(chkFirmwareBuildOpts);
     while (it.hasNext()) {
       it.next();
       QCheckBox * chk = it.value();
@@ -405,6 +405,7 @@ void PrefsProfilePanel::populateFirmwareOptions(QStringList opts)
       // connect to duplicates check handler if this option is part of a group
       if (optGrp.size() > 1)
         chk->setBindPostChanged([=] { this->onOptionChanged(opt.name); });
+
       layFirmwareBuildOpts->addWidget(chk, index / 4, index % 4);
       chkFirmwareBuildOpts.insert(opt.name, chk);
       QWidget::setTabOrder(prevFocus, chk);
@@ -412,22 +413,28 @@ void PrefsProfilePanel::populateFirmwareOptions(QStringList opts)
       ++index;
     }
   }
+
   shrink();
 }
 
 void PrefsProfilePanel::onOptionChanged(QString name)
 {
+  AutoCheckBox *chk = chkFirmwareBuildOpts.value(name, nullptr);
+
+  if (!(chk && chk->isChecked())) return;
+
   const Firmware::OptionsList & fwOpts = firmware->getFirmwareBase()->optionGroups();
 
   // This de-selects any mutually exlusive options (that is, members of the same QList<Option> list).
   for (const Firmware::OptionsGroup & optGrp : fwOpts) {
     for (const Firmware::Option & opt : optGrp) {
       if (name == opt.name) {
-        QCheckBox *ochk = nullptr;
+        AutoCheckBox *ochk = nullptr;
 
-        foreach(const Firmware::Option & other, optGrp)
+        foreach(const Firmware::Option & other, optGrp) {
           if (other.name != opt.name && (ochk = chkFirmwareBuildOpts.value(other.name, nullptr)))
-            ochk->setChecked(false);
+            ochk->setValue(false);
+        }
 
         return;
       }
@@ -440,11 +447,11 @@ QStringList PrefsProfilePanel::getSelectedOptions()
   QStringList opts;
 
   if (chkFirmwareBuildOpts.size()) {
-    QMutableMapIterator<QString, QCheckBox *> it(chkFirmwareBuildOpts);
+    QMutableMapIterator<QString, AutoCheckBox *> it(chkFirmwareBuildOpts);
 
     while (it.hasNext()) {
       it.next();
-      QCheckBox * chk = it.value();
+      AutoCheckBox * chk = it.value();
 
       if (chk->isChecked())
         opts.append(it.key());

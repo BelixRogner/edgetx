@@ -49,7 +49,7 @@ class AbstractPanel : public QWidget
     virtual void update();
 
   protected:
-    bool lock;
+    bool lock;  // TODO for consistency move to private and add protected getter and setter
     FilteredItemModelFactory *panelItemModels;
 
     void addLabel(QGridLayout * gridLayout, const QString &text, int col, bool mimimize=false);
@@ -66,7 +66,10 @@ class AbstractPanel : public QWidget
     WidgetBindings *bindings();
     void applyBindings();
     void shrink();
+    //bool lock();  TODO
+    //void setLock(bool val); TODO
 
   private:
+    //bool m_lock; TODO
     std::unique_ptr<WidgetBindings> m_bindings;
 };
