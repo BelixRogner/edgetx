@@ -48,6 +48,7 @@ class PrefsEditDialog : public QDialog
   signals:
     void firmwareProfileChanged();
     void firmwareProfileAboutToChange(bool saveFiles = true);
+    void resetFirmware();
 
   protected:
     void closeEvent(QCloseEvent *event);
@@ -62,7 +63,6 @@ class PrefsEditDialog : public QDialog
     Profile &profile;
     QList<PrefsPanel *> panels;
     bool dirty;
-    bool notifyFirmwareChange;
 
     PrefsPanel * addTab(PrefsPanel * panel, QString text);
     void maybeSave();

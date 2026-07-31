@@ -36,10 +36,11 @@ PrefsPanel::~PrefsPanel()
     delete grid;
 }
 
-void PrefsPanel::onFirmwareChanged(Firmware * firmware)
+void PrefsPanel::onRadioChanged(Firmware * firmware)
 {
   this->firmware = firmware;
   board = this->firmware->getBoard();
+  update();
 }
 
 /*

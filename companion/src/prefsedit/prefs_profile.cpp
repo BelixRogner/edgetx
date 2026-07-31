@@ -58,9 +58,6 @@ PrefsProfilePanel::PrefsProfilePanel(QWidget * parent, Firmware * fw, Board::Typ
   });
 
   // radio
-  //
-  // Note: lots of things need to happen when the selection changes !!!!!!!
-  //
   ui->cboRadio->setModel(firmwareModel());
   // QComboBox::sizeAdjustPolicy(QCombobox::AdjustToContents) does not resize as requested
   // due to using a model and nested layouts. Since the list view width is correct, use it
@@ -73,8 +70,11 @@ PrefsProfilePanel::PrefsProfilePanel(QWidget * parent, Firmware * fw, Board::Typ
     this->firmware = Firmware::getFirmwareForId(this->ui->cboRadio->currentData().toString() % "-xxx");
     this->board = this->firmware->getBoard();
     this->populateFirmwareOptions();
-    // trigger all prefs panels to update including this one
-    emit firmwareChanged(this->firmware);
+    // clear backup settings as they are specific to the firmware
+    this->profile.generalSettings(QByteArray());
+    this->profile.timeStamp(QString());
+    this->update();
+    emit radioChanged(this->firmware);
   });
 
   // new file
@@ -228,7 +228,7 @@ PrefsProfilePanel::PrefsProfilePanel(QWidget * parent, Firmware * fw, Board::Typ
   ui->csectFolders->setContentLayout(*layFolders);
   ui->csectFolders->setBindResize([this] { this->shrink(); });
 
-  // options  TODO split into custom and those supported by Cloud Build
+  // options  TODO split into those supported by Cloud Build and others
   row = col = 0;
   ui->csectFirmwareOpts->setTitle(tr("Firmware Options"));
   QGridLayout *layFirmwareOpts = new QGridLayout();
@@ -459,4 +459,12 @@ QStringList PrefsProfilePanel::getSelectedOptions()
   }
 
   return opts;
+}
+
+void PrefsProfilePanel::undoFirmwareChange()
+{
+  firmware = getCurrentFirmware();
+  board = firmware->getBoard();
+  ui->cboRadio->setValue(firmware->getFirmwareBase()->getId());
+  populateFirmwareOptions(profile.fwOptions().split("-"));
 }

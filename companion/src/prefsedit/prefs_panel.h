@@ -43,10 +43,10 @@ class PrefsPanel : public AbstractPanel
     virtual void save() override {};
 
   signals:
-    void firmwareChanged(Firmware * firmware);
+    void radioChanged(Firmware * firmware);
 
   protected slots:
-    void onFirmwareChanged(Firmware * firmware);
+    void onRadioChanged(Firmware * firmware);
 
   protected:
     Firmware *firmware;

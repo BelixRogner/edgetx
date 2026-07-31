@@ -46,6 +46,7 @@ class PrefsProfilePanel : public PrefsPanel
 
   public slots:
     void onOptionChanged(QString name);
+    void undoFirmwareChange();
 
   private:
     Ui::PrefsProfile * ui;
