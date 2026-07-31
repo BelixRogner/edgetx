@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>15</x>
-     <y>315</y>
+     <y>295</y>
      <width>91</width>
      <height>16</height>
     </rect>
@@ -29,14 +29,14 @@
     </sizepolicy>
    </property>
    <property name="text">
-    <string>Models</string>
+    <string>Models Folder</string>
    </property>
   </widget>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>165</x>
-     <y>305</y>
+     <y>285</y>
      <width>225</width>
      <height>24</height>
     </rect>
@@ -64,11 +64,30 @@
     </item>
    </layout>
   </widget>
-  <widget class="QLabel" name="label_19">
+  <widget class="QLabel" name="label_11">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>340</y>
+     <y>170</y>
+     <width>127</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>Delete Model Action</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_19">
+   <property name="geometry">
+    <rect>
+     <x>15</x>
+     <y>355</y>
      <width>141</width>
      <height>16</height>
     </rect>
@@ -80,14 +99,14 @@
     </sizepolicy>
    </property>
    <property name="text">
-    <string>Firmware Backups</string>
+    <string>Firmware Backup Folder</string>
    </property>
   </widget>
   <widget class="QWidget" name="layoutWidget_2">
    <property name="geometry">
     <rect>
-     <x>165</x>
-     <y>335</y>
+     <x>170</x>
+     <y>350</y>
      <width>225</width>
      <height>24</height>
     </rect>
@@ -120,7 +139,7 @@
     <rect>
      <x>170</x>
      <y>260</y>
-     <width>451</width>
+     <width>501</width>
      <height>19</height>
     </rect>
    </property>
@@ -131,8 +150,8 @@
   <widget class="QComboBox" name="cboNewModelAction_2">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>520</y>
+     <x>170</x>
+     <y>478</y>
      <width>79</width>
      <height>22</height>
     </rect>
@@ -142,7 +161,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>510</y>
+     <y>478</y>
      <width>127</width>
      <height>16</height>
     </rect>
@@ -154,14 +173,14 @@
     </sizepolicy>
    </property>
    <property name="text">
-    <string>Level</string>
+    <string>Logging Level</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="sortProfiles_3">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>550</y>
+     <x>170</x>
+     <y>508</y>
      <width>31</width>
      <height>19</height>
     </rect>
@@ -174,7 +193,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>540</y>
+     <y>508</y>
      <width>127</width>
      <height>16</height>
     </rect>
@@ -186,14 +205,27 @@
     </sizepolicy>
    </property>
    <property name="text">
-    <string>Verbose</string>
+    <string>Verbose Logging</string>
+   </property>
+  </widget>
+  <widget class="Line" name="line_6">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>398</y>
+     <width>702</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Orientation::Horizontal</enum>
    </property>
   </widget>
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>10</y>
+     <x>10</x>
+     <y>80</y>
      <width>66</width>
      <height>16</height>
     </rect>
@@ -205,14 +237,27 @@
     </sizepolicy>
    </property>
    <property name="text">
-    <string>General</string>
+    <string>Remember</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_22">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>110</y>
+     <width>44</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Update</string>
    </property>
   </widget>
   <widget class="QComboBox" name="cboNewModelAction">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>132</y>
+     <x>160</x>
+     <y>142</y>
      <width>79</width>
      <height>22</height>
     </rect>
@@ -221,8 +266,8 @@
   <widget class="QLabel" name="label_8">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>140</y>
+     <x>10</x>
+     <y>150</y>
      <width>127</width>
      <height>16</height>
     </rect>
@@ -234,15 +279,15 @@
     </sizepolicy>
    </property>
    <property name="text">
-    <string>New</string>
+    <string>New Model Action</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="opt_removeBlankSlots">
    <property name="geometry">
     <rect>
-     <x>170</x>
+     <x>160</x>
      <y>170</y>
-     <width>341</width>
+     <width>201</width>
      <height>19</height>
     </rect>
    </property>
@@ -307,17 +352,61 @@
     <string>Google Earth Executable</string>
    </property>
   </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>165</x>
+     <y>75</y>
+     <width>195</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="0,1">
+    <property name="spacing">
+     <number>6</number>
+    </property>
+    <item>
+     <widget class="QSpinBox" name="historySize">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+        <horstretch>40</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximum">
+       <number>50</number>
+      </property>
+      <property name="value">
+       <number>10</number>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_15">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>most recently used files</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QCheckBox" name="showSplash">
    <property name="geometry">
     <rect>
-     <x>230</x>
-     <y>30</y>
-     <width>41</width>
+     <x>166</x>
+     <y>11</y>
+     <width>143</width>
      <height>19</height>
     </rect>
    </property>
    <property name="text">
-    <string/>
+    <string>Show splash screen</string>
    </property>
    <property name="checked">
     <bool>true</bool>
@@ -333,7 +422,20 @@
     </rect>
    </property>
    <property name="text">
-    <string>Move selected profile to the top of the list</string>
+    <string>Move selected Radio Profile to the top of the list</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="chkPromptInstall">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>110</y>
+     <width>237</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Prompt to run installer after update</string>
    </property>
   </widget>
   <widget class="QComboBox" name="splashincludeCB">
@@ -367,7 +469,7 @@
     <rect>
      <x>170</x>
      <y>220</y>
-     <width>441</width>
+     <width>408</width>
      <height>19</height>
     </rect>
    </property>
@@ -386,7 +488,7 @@
     <rect>
      <x>170</x>
      <y>240</y>
-     <width>441</width>
+     <width>383</width>
      <height>19</height>
     </rect>
    </property>
@@ -398,7 +500,7 @@
    <property name="geometry">
     <rect>
      <x>170</x>
-     <y>370</y>
+     <y>438</y>
      <width>225</width>
      <height>24</height>
     </rect>
@@ -429,8 +531,8 @@
   <widget class="QLabel" name="lbl_appLogsDir">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>370</y>
+     <x>15</x>
+     <y>443</y>
      <width>114</width>
      <height>16</height>
     </rect>
@@ -442,15 +544,15 @@
     </sizepolicy>
    </property>
    <property name="text">
-    <string>Logs</string>
+    <string>Logs Folder</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_12">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>440</y>
-     <width>61</width>
+     <x>15</x>
+     <y>413</y>
+     <width>137</width>
      <height>16</height>
     </rect>
    </property>
@@ -462,6 +564,51 @@
    </property>
    <property name="text">
     <string>Logging</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>410</y>
+     <width>446</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
+     <widget class="QCheckBox" name="opt_appDebugLog">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Keep a log of all debugging messages generated by the desktop Companion/Simulator applications. An EdgeTX developer may request this to help diagnose an issue.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>Application (Companion/Simulator)</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="opt_fwTraceLog">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Keep a log of all messages generated by the radio firmware when running in Simulator. This is the same information one would also see in the Simulator &lt;span style=&quot; font-style:italic;&quot;&gt;Debug Output&lt;/span&gt; window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>Radio Firmware (in Simulator)</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="Line" name="line_3">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>190</y>
+     <width>702</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Orientation::Horizontal</enum>
    </property>
   </widget>
   <widget class="QWidget" name="layoutWidget">
@@ -502,6 +649,25 @@
     </item>
    </layout>
   </widget>
+  <widget class="QLabel" name="label_17">
+   <property name="geometry">
+    <rect>
+     <x>15</x>
+     <y>325</y>
+     <width>141</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>Models Backup Folder</string>
+   </property>
+  </widget>
   <widget class="QLabel" name="label_23">
    <property name="geometry">
     <rect>
@@ -537,14 +703,27 @@
   <widget class="QCheckBox" name="chkPromptProfile">
    <property name="geometry">
     <rect>
-     <x>230</x>
-     <y>50</y>
-     <width>51</width>
+     <x>166</x>
+     <y>36</y>
+     <width>164</width>
      <height>19</height>
     </rect>
    </property>
    <property name="text">
-    <string/>
+    <string>Prompt for radio profile</string>
+   </property>
+  </widget>
+  <widget class="Line" name="line_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>615</y>
+     <width>702</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Orientation::Horizontal</enum>
    </property>
   </widget>
   <widget class="QLabel" name="label_9">
@@ -566,117 +745,57 @@
     <string>User Splash Screens</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_24">
+  <widget class="Line" name="line_7">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>290</y>
-     <width>81</width>
+     <y>570</y>
+     <width>702</width>
      <height>16</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Folders</string>
+   <property name="orientation">
+    <enum>Qt::Orientation::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QCheckBox" name="opt_appDebugLog">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>470</y>
-     <width>51</width>
-     <height>19</height>
+     <x>170</x>
+     <y>320</y>
+     <width>225</width>
+     <height>24</height>
     </rect>
    </property>
-   <property name="toolTip">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Keep a log of all debugging messages generated by the desktop Companion/Simulator applications. An EdgeTX developer may request this to help diagnose an issue.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="opt_fwTraceLog">
-   <property name="geometry">
-    <rect>
-     <x>280</x>
-     <y>490</y>
-     <width>51</width>
-     <height>19</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Keep a log of all messages generated by the radio firmware when running in Simulator. This is the same information one would also see in the Simulator &lt;span style=&quot; font-style:italic;&quot;&gt;Debug Output&lt;/span&gt; window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_15">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>80</y>
-     <width>161</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="text">
-    <string>Most recently used files</string>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="historySize">
-   <property name="geometry">
-    <rect>
-     <x>180</x>
-     <y>80</y>
-     <width>43</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-     <horstretch>40</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="maximum">
-    <number>50</number>
-   </property>
-   <property name="value">
-    <number>10</number>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_11">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>170</y>
-     <width>127</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="text">
-    <string>Delete</string>
-   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_99">
+    <item>
+     <widget class="QLineEdit" name="backupPath">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="readOnly">
+       <bool>false</bool>
+      </property>
+      <property name="clearButtonEnabled">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="backupPathButton">
+      <property name="text">
+       <string>Select Folder</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QLabel" name="label_16">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>470</y>
-     <width>231</width>
+     <x>11</x>
+     <y>11</y>
+     <width>98</width>
      <height>16</height>
     </rect>
    </property>
@@ -687,83 +806,20 @@
     </sizepolicy>
    </property>
    <property name="text">
-    <string>Application (Companion/Simulator)</string>
+    <string>Startup Settings</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_17">
+  <widget class="Line" name="line_4">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>490</y>
-     <width>221</width>
+     <x>10</x>
+     <y>120</y>
+     <width>702</width>
      <height>16</height>
     </rect>
    </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="text">
-    <string>Radio Firmware (in Simulator)</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_20">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>110</y>
-     <width>127</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="text">
-    <string>Model Actions</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_21">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>30</y>
-     <width>161</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="text">
-    <string>Show splash screen</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_22">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>50</y>
-     <width>161</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="text">
-    <string>Prompt for radio profile on startup</string>
+   <property name="orientation">
+    <enum>Qt::Orientation::Horizontal</enum>
    </property>
   </widget>
  </widget>
