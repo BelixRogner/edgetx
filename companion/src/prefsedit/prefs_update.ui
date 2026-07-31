@@ -192,7 +192,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>440</y>
+     <y>580</y>
      <width>461</width>
      <height>19</height>
     </rect>
@@ -214,7 +214,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>465</y>
+     <y>445</y>
      <width>441</width>
      <height>19</height>
     </rect>
@@ -226,20 +226,20 @@
     </sizepolicy>
    </property>
    <property name="text">
-    <string>Prompt to flash firmware to radio after update</string>
+    <string>Prompt to flash firmware</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="chkPromptSDSync_2">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>490</y>
+     <y>470</y>
      <width>239</width>
      <height>19</height>
     </rect>
    </property>
    <property name="text">
-    <string>Prompt to run SD Sync after update</string>
+    <string>Prompt to run SD Sync</string>
    </property>
   </widget>
   <widget class="QLabel" name="label">
@@ -255,7 +255,15 @@
     <string>Post update</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>358</width>
+     <height>24</height>
+    </rect>
+   </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QLabel" name="lblCheckFreq">
@@ -288,6 +296,19 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QCheckBox" name="chkPromptInstall">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>500</y>
+     <width>341</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Prompt to run Companion installer</string>
+   </property>
   </widget>
  </widget>
  <resources/>

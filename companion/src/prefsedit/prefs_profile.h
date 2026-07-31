@@ -68,6 +68,7 @@ class PrefsProfilePanel : public PrefsPanel
     QStringList   strlBuildOpts;
     QGridLayout  *layFirmwareBuildOpts;
     QMap<QString, AutoCheckBox *> chkFirmwareBuildOpts;
+    AutoCheckBox *chkBackupBeforeFlash;
 
     inline void newRow() { ++row; col = 0; }
     QString getLanguage();
