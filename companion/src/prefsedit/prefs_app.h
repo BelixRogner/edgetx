@@ -32,12 +32,19 @@ class PrefsAppPanel : public PrefsPanel
     Q_OBJECT
 
   public:
-    PrefsAppPanel(QWidget * parent);
+    PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, Profile & prof);
     virtual ~PrefsAppPanel();
 
-    virtual bool save() override;
+    virtual void save() override;
     virtual void update() override;
 
   private:
     Ui::PrefsApp * ui;
+    int row;
+    int col;
+
+    AutoCheckBox *chkSplash;
+
+    inline void newRow() { ++row; col = 0; }
+
 };

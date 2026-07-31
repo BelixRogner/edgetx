@@ -23,19 +23,36 @@
 #include "ui_prefs_app.h"
 #include "appdata.h"
 
-PrefsAppPanel::PrefsAppPanel(QWidget * parent):
-  PrefsPanel(parent),
+PrefsAppPanel::PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, Profile & prof) :
+  PrefsPanel(parent, fw, bd, prof),
   ui(new Ui::PrefsApp)
 {
   ui->setupUi(this);
   lock = true;
 
-  connect(ui->opt_appDebugLog, &QCheckBox::toggled, this, &PrefsAppPanel::toggleAppLogPrefs);
-  connect(ui->opt_fwTraceLog, &QCheckBox::toggled, this, &PrefsAppPanel::toggleAppLogPrefs);
-  connect(ui->backupPath, &QLineEdit::editingFinished, this, &PrefsAppPanel::onBackupPathEditingFinished);
-  connect(ui->backupPathButton, &QPushButton::clicked, this, &PrefsAppPanel::onBackupPathButtonClicked);
+  row = col = 0;
+  ui->csectGeneral->setTitle(tr("General"));
+  QGridLayout *layGeneral = new QGridLayout();
+  // show splash on start
+  AutoLabel *lblSplash = new AutoLabel(this, tr("Splash"));
+  layGeneral->addWidget(lblSplash, row, col++);
+  chkSplash = new AutoCheckBox(this);
+  chkSplash->setValue(g.showSplash(), this);
+  chkSplash->setBindSave([this] {
+    g.showSplash(this->chkSplash->isChecked());
+  });
+  layGeneral->addWidget(chkSplash, row, col++);
+
+  newRow();
+
+
+
+  addHSpring(layGeneral, col, row);
+  ui->csectGeneral->setContentLayout(*layGeneral);
+  ui->csectGeneral->setBindResize([this] { this->shrink(); });
 
   update();
+  shrink();
   lock = false;
 }
 
@@ -44,163 +61,13 @@ PrefsAppPanel::~PrefsAppPanel()
   delete ui;
 }
 
-
-bool PrefsAppPanel::save()
+void PrefsAppPanel::save()
 {
-  g.showSplash(ui->showSplash->isChecked());
-  g.sortProfiles(ui->sortProfiles->isChecked());
-  g.promptProfile(ui->chkPromptProfile->isChecked());
-  g.removeModelSlots(ui->opt_removeBlankSlots->isChecked());
-  g.newModelAction((AppData::NewModelAction)ui->cboNewModelAction->currentIndex());
-  g.historySize(ui->historySize->value());
-  profile.volumeGain(round(ui->volumeGain->value() * 10.0));
-  g.libDir(ui->libraryPath->text());
-  g.gePath(ui->ge_lineedit->text());
-  g.embedSplashes(ui->splashincludeCB->currentIndex());
-  g.enableBackup(ui->backupEnable->isChecked());
-
-  g.appDebugLog(ui->opt_appDebugLog->isChecked());
-  g.fwTraceLog(ui->opt_fwTraceLog->isChecked());
-  g.appLogsDir(ui->appLogsDir->text());
-  g.runAppInstaller(ui->chkPromptInstall->isChecked());
-  g.useSavedSettings(ui->chkUseSavedSettingsApp->isChecked());
-
+  AbstractPanel::save();
 }
 
 void PrefsAppPanel::update()
 {
-  ui->showSplash->setChecked(g.showSplash());
-  ui->sortProfiles->setChecked(g.sortProfiles());
-  ui->chkPromptProfile->setChecked(g.promptProfile());
-  ui->historySize->setValue(g.historySize());
-  ui->opt_removeBlankSlots->setChecked(g.removeModelSlots());
-  ui->cboNewModelAction->addItems(AppData::newModelActionsList());
-  ui->cboNewModelAction->setCurrentIndex(g.newModelAction());
-  ui->libraryPath->setText(g.libDir());
-  ui->ge_lineedit->setText(g.gePath());
-
-  ui->backupPath->setText(g.backupDir());
-  if (!ui->backupPath->text().isEmpty() && QDir(ui->backupPath->text()).exists()) {
-    ui->backupEnable->setEnabled(true);
-    ui->backupEnable->setChecked(g.enableBackup());
-  } else {
-    ui->backupEnable->setChecked(false);
-    ui->backupEnable->setEnabled(false);
-  }
-
-  ui->splashincludeCB->setCurrentIndex(g.embedSplashes());
-
-  ui->opt_appDebugLog->setChecked(g.appDebugLog());
-  ui->opt_fwTraceLog->setChecked(g.fwTraceLog());
-  ui->appLogsDir->setText(g.appLogsDir());
-  toggleAppLogPrefs();
-  ui->chkPromptInstall->setChecked(g.runAppInstaller());
-
+  AbstractPanel::update();
 }
-
-void PrefsAppPanel::on_libraryPathButton_clicked()
-{
-  QString fileName = QFileDialog::getExistingDirectory(this,tr("Select your library folder"), g.libDir());
-  if (!fileName.isEmpty()) {
-    g.libDir(fileName);
-    ui->libraryPath->setText(fileName);
-  }
-}
-
-void PrefsAppPanel::onBackupPathButtonClicked()
-{
-  QString fileName = QFileDialog::getExistingDirectory(this,tr("Select your global backup folder"), g.backupDir());
-  if (!fileName.isEmpty()) {
-    g.backupDir(fileName);
-    ui->backupPath->setText(fileName);
-    ui->backupEnable->setEnabled(true);
-    ui->profileBackupEnable->setEnabled(true);
-  } else {
-    ui->backupEnable->setEnabled(false);
-    if (!g.currentProfile().pBackupDir().isEmpty() && QFileInfo(g.currentProfile().pBackupDir()).exists()) {
-      ui->profileBackupEnable->setEnabled(true);
-    } else {
-      ui->profileBackupEnable->setEnabled(false);
-    }
-  }
-}
-
-void PrefsAppPanel::on_btn_appLogsDir_clicked()
-{
-  QString fileName = QFileDialog::getExistingDirectory(this, tr("Select a folder for application logs"), ui->appLogsDir->text());
-  if (!fileName.isEmpty()) {
-    ui->appLogsDir->setText(fileName);
-  }
-}
-
-void PrefsAppPanel::on_ge_pathButton_clicked()
-{
-  QString fileName = QFileDialog::getOpenFileName(this, tr("Select Google Earth executable"),ui->ge_lineedit->text());
-  if (!fileName.isEmpty()) {
-    ui->ge_lineedit->setText(fileName);
-  }
-}
-
-bool PrefsAppPanel::displayImage(const QString & fileName)
-{
-  // Start by clearing the label
-  ui->imageLabel->clear();
-
-  if (fileName.isEmpty())
-    return false;
-
-  QImage image(fileName);
-  if (image.isNull())
-    return false;
-
-  ui->imageLabel->setPixmap(makePixMap(image));
-  ui->imageLabel->setFixedSize(Boards::getCapability(getCurrentBoard(), Board::LcdWidth),
-                               Boards::getCapability(getCurrentBoard(), Board::LcdHeight));
-  return true;
-}
-
-void PrefsAppPanel::on_SplashSelect_clicked()
-{
-  QString supportedImageFormats;
-  for (int formatIndex = 0; formatIndex < QImageReader::supportedImageFormats().count(); formatIndex++) {
-    supportedImageFormats += QLatin1String(" *.") + QImageReader::supportedImageFormats()[formatIndex];
-  }
-
-  QString fileName = QFileDialog::getOpenFileName(this,
-          tr("Open Image to load"), g.imagesDir(), tr("Images (%1)").arg(supportedImageFormats));
-
-  if (!fileName.isEmpty()){
-    g.imagesDir(QFileInfo(fileName).dir().absolutePath());
-
-    displayImage(fileName);
-    ui->SplashFileName->setText(fileName);
-  }
-}
-
-void PrefsAppPanel::on_clearImageButton_clicked()
-{
-  ui->imageLabel->clear();
-  ui->SplashFileName->clear();
-}
-
-void PrefsAppPanel::toggleAppLogPrefs()
-{
-  bool vis = (ui->opt_appDebugLog->isChecked() || ui->opt_fwTraceLog->isChecked());
-  ui->appLogsDir->setVisible(vis);
-  ui->lbl_appLogsDir->setVisible(vis);
-  ui->btn_appLogsDir->setVisible(vis);
-}
-
-void PrefsAppPanel::onBackupPathEditingFinished()
-{
-  if(!ui->backupPath->text().isEmpty() && QFileInfo(ui->backupPath->text()).exists()) {
-    ui->backupEnable->setEnabled(true);
-  } else {
-    ui->backupEnable->setChecked(false);
-    ui->backupEnable->setEnabled(false);
-  }
-
-  onProfileBackupPathEditingFinished();
-}
-
 
