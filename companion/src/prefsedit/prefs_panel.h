@@ -52,7 +52,6 @@ class PrefsPanel : public AbstractPanel
     Firmware *firmware;
     Board::Type board;
     Profile &profile;
-    GridLayout *grid;
     int row;
     int col;
 };

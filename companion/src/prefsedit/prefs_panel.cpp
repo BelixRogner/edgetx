@@ -26,7 +26,6 @@ PrefsPanel::PrefsPanel(QWidget * parent, Firmware * firmware, Board::Type & boar
   firmware(firmware),
   board(board),
   profile(profile),
-  grid(nullptr),
   row(0),
   col(0)
 {
@@ -34,8 +33,6 @@ PrefsPanel::PrefsPanel(QWidget * parent, Firmware * firmware, Board::Type & boar
 
 PrefsPanel::~PrefsPanel()
 {
-  if (grid)
-    delete grid;
 }
 
 void PrefsPanel::onRadioChanged(Firmware * firmware)
