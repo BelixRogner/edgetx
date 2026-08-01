@@ -39,6 +39,9 @@ class AutoSpinBox : public QSpinBox, public AutoWidget
 
     void setField(int & field, AbstractPanel * panel = nullptr);
     void setField(unsigned int & field, AbstractPanel * panel = nullptr);
+    // use for widget not bound to a memory address
+    void setValue(int val, AbstractPanel * panel);
+    void setValue(int val);
 
   signals:
     void currentDataChanged(int value);
@@ -48,6 +51,7 @@ class AutoSpinBox : public QSpinBox, public AutoWidget
 
   private:
     int *m_field;
+    int m_value;
 
     void setFieldInit(AbstractPanel * panel);
 };
