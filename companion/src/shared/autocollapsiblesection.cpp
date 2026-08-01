@@ -52,6 +52,7 @@ AutoCollapsibleSection::AutoCollapsibleSection(QWidget * parent) :
   headerLine = new QFrame(this);
   toggleAnimation = new QParallelAnimationGroup(this);
   contentArea = new QScrollArea(this);
+  contentAreaLayout = new QGridLayout();
   mainLayout = new QGridLayout(this);
 
   toggleButton->setStyleSheet("QToolButton {border: none;}");
@@ -92,6 +93,24 @@ AutoCollapsibleSection::AutoCollapsibleSection(QWidget * parent) :
     if (fnResize) fnResize();
     emit resized();
   });
+}
+
+QGridLayout * AutoCollapsibleSection::start(const QString & title)
+{
+  setTitle(title);
+  return contentAreaLayout;
+}
+
+void AutoCollapsibleSection::finish(int springRow, int springCol, std::function<void()> fnResize)
+{
+  if (springRow >= 0 && springCol >= 0) {
+    QSpacerItem * spacer = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    contentAreaLayout->addItem(spacer, springRow, springCol);
+  }
+
+  // attach after constructed for better sizing
+  setContentLayout(*contentAreaLayout);
+  setBindResize(fnResize);
 }
 
 void AutoCollapsibleSection::setAnimationDuration(const int duration)

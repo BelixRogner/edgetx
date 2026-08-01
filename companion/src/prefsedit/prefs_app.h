@@ -44,7 +44,11 @@ class PrefsAppPanel : public PrefsPanel
     int col;
 
     AutoCheckBox *chkSplash;
+    AutoCheckBox *chkProfPrmpt;
+    AutoSpinBox *sbxRecentFiles;
+    AutoComboBox *cboModelNew;
+    AutoCheckBox *chkModelDelete;
+
 
     inline void newRow() { ++row; col = 0; }
-
 };

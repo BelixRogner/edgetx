@@ -30,12 +30,10 @@ PrefsAppPanel::PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, 
   ui->setupUi(this);
   lock = true;
 
+  QGridLayout *layGeneral = ui->csectGeneral->start(tr("General"));
   row = col = 0;
-  ui->csectGeneral->setTitle(tr("General"));
-  QGridLayout *layGeneral = new QGridLayout();
-  // show splash on start
-  AutoLabel *lblSplash = new AutoLabel(this, tr("Splash"));
-  layGeneral->addWidget(lblSplash, row, col++);
+  AutoLabel *lblShowSplash = new AutoLabel(this, tr("Show splash screen"));
+  layGeneral->addWidget(lblShowSplash, row, col++);
   chkSplash = new AutoCheckBox(this);
   chkSplash->setValue(g.showSplash(), this);
   chkSplash->setBindSave([this] {
@@ -44,12 +42,50 @@ PrefsAppPanel::PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, 
   layGeneral->addWidget(chkSplash, row, col++);
 
   newRow();
+  AutoLabel *lblProfPrmpt = new AutoLabel(this, tr("Prompt for radio profile on startup"));
+  layGeneral->addWidget(lblProfPrmpt, row, col++);
+  chkProfPrmpt = new AutoCheckBox(this);
+  chkProfPrmpt->setValue(g.promptProfile(), this);
+  chkProfPrmpt->setBindSave([this] {
+    g.promptProfile(this->chkProfPrmpt->isChecked());
+  });
+  layGeneral->addWidget(chkProfPrmpt, row, col++);
 
+  newRow();
+  AutoLabel *lblRecentFiles = new AutoLabel(this, tr("Most recently used files"));
+  layGeneral->addWidget(lblRecentFiles, row, col++);
+  sbxRecentFiles = new AutoSpinBox(this);
+  sbxRecentFiles->setRange(1, 50);
+  sbxRecentFiles->setValue(g.historySize());
+  sbxRecentFiles->setBindSave([this] {
+    g.historySize(this->sbxRecentFiles->value());
+  });
+  layGeneral->addWidget(sbxRecentFiles, row, col++);
+  ui->csectGeneral->finish(row, col, [this] { this->shrink(); });
 
+  QGridLayout *layModelActions = ui->csectModelActions->start(tr("Model Actions"));
+  row = col = 0;
+  AutoLabel *lblModelNew = new AutoLabel(this, tr("New"));
+  layModelActions->addWidget(lblModelNew, row, col++);
+  cboModelNew = new AutoComboBox(this);
+  cboModelNew->addItems(AppData::newModelActionsList());
+  cboModelNew->setValue((int)g.newModelAction(), this);
+  cboModelNew->setBindSave([this] {
+    g.newModelAction((AppData::NewModelAction)this->cboModelNew->currentData().toInt());
+  });
+  layModelActions->addWidget(cboModelNew, row, col++);
 
-  addHSpring(layGeneral, col, row);
-  ui->csectGeneral->setContentLayout(*layGeneral);
-  ui->csectGeneral->setBindResize([this] { this->shrink(); });
+  newRow();
+  AutoLabel *lblModelDelete = new AutoLabel(this, tr("Delete"));
+  layModelActions->addWidget(lblModelDelete, row, col++);
+  chkModelDelete = new AutoCheckBox(this);
+  chkModelDelete->setValue(g.removeModelSlots(), this);
+  chkModelDelete->setBindSave([this] {
+    g.removeModelSlots(this->chkModelDelete->isChecked());
+  });
+  layModelActions->addWidget(chkModelDelete, row, col++);
+  ui->csectModelActions->finish(row, col, [this] { this->shrink(); });
+
 
   update();
   shrink();
@@ -70,4 +106,3 @@ void PrefsAppPanel::update()
 {
   AbstractPanel::update();
 }
-
