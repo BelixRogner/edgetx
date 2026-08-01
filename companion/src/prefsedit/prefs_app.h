@@ -65,4 +65,10 @@ class PrefsAppPanel : public PrefsPanel
 
 
     inline void newRow() { ++row; col = 0; }
+    void sectionFolders();
+    void sectionGeneral();
+    void sectionGoogleEarth();
+    void sectionLogging();
+    void sectionRadioProfiles();
+    void sectionSplashScreens();
 };

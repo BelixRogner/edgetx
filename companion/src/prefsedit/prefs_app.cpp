@@ -30,97 +30,30 @@ PrefsAppPanel::PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, 
   ui->setupUi(this);
   lock = true;
 
-  QGridLayout *layGeneral = ui->csectGeneral->start(tr("General"));
-  row = col = 0;
-  AutoLabel *lblShowSplash = new AutoLabel(this, tr("Show splash screen"));
-  layGeneral->addWidget(lblShowSplash, row, col++);
-  chkSplash = new AutoCheckBox(this);
-  chkSplash->setValue(g.showSplash(), this);
-  chkSplash->setBindSave([this] {
-    g.showSplash(this->chkSplash->isChecked());
-  });
-  layGeneral->addWidget(chkSplash, row, col++);
+  sectionGeneral();
+  sectionRadioProfiles();
+  sectionFolders();
+  sectionLogging();
+  sectionGoogleEarth();
+  sectionSplashScreens();
 
-  newRow();
-  AutoLabel *lblProfPrmpt = new AutoLabel(this, tr("Prompt for radio profile on startup"));
-  layGeneral->addWidget(lblProfPrmpt, row, col++);
-  chkProfPrmpt = new AutoCheckBox(this);
-  chkProfPrmpt->setValue(g.promptProfile(), this);
-  chkProfPrmpt->setBindSave([this] {
-    g.promptProfile(this->chkProfPrmpt->isChecked());
-  });
-  layGeneral->addWidget(chkProfPrmpt, row, col++);
+  update();
+  shrink();
+  lock = false;
+}
 
-  newRow();
-  AutoLabel *lblRecentFiles = new AutoLabel(this, tr("Most recently used files"));
-  layGeneral->addWidget(lblRecentFiles, row, col++);
-  sbxRecentFiles = new AutoSpinBox(this);
-  sbxRecentFiles->setRange(1, 50);
-  sbxRecentFiles->setValue(g.historySize());
-  sbxRecentFiles->setBindSave([this] {
-    g.historySize(this->sbxRecentFiles->value());
-  });
-  layGeneral->addWidget(sbxRecentFiles, row, col++);
+PrefsAppPanel::~PrefsAppPanel()
+{
+  delete ui;
+}
 
-  newRow();
-  AutoLabel *lblModelNew = new AutoLabel(this, tr("New models action"));
-  layGeneral->addWidget(lblModelNew, row, col++);
-  cboModelNew = new AutoComboBox(this);
-  cboModelNew->addItems(AppData::newModelActionsList());
-  cboModelNew->setValue((int)g.newModelAction(), this);
-  cboModelNew->setBindSave([this] {
-    g.newModelAction((AppData::NewModelAction)this->cboModelNew->currentData().toInt());
-  });
-  layGeneral->addWidget(cboModelNew, row, col++);
+void PrefsAppPanel::save()
+{
+  AbstractPanel::save();
+}
 
-  //  TODO implement profile level setting as override
-  newRow();
-  AutoLabel *lblModelDelete = new AutoLabel(this, tr("B&W remove empty slot on delete)"));
-  layGeneral->addWidget(lblModelDelete, row, col++);
-  chkModelDelete = new AutoCheckBox(this);
-  chkModelDelete->setValue(g.removeModelSlots(), this);
-  chkModelDelete->setBindSave([this] {
-    g.removeModelSlots(this->chkModelDelete->isChecked());
-  });
-  layGeneral->addWidget(chkModelDelete, row, col++);
-  ui->csectGeneral->finish(row, col, [this] { this->shrink(); }, true);
-
-  QGridLayout *layProfiles = ui->csectProfiles->start(tr("Radio Profiles"));
-  row = col = 0;
-
-  chkProfileTop = new AutoCheckBox(this, tr("Move selected profile to the top of the list"));
-  chkProfileTop->setValue(g.sortProfiles(), this);
-  chkProfileTop->setBindSave([this] {
-    g.sortProfiles(this->chkProfileTop->isChecked());
-  });
-  layProfiles->addWidget(chkProfileTop, row, col++);
-
-  newRow();
-  chkBackupFirmware = new AutoCheckBox(this, tr("Prompt to backup current firmware before flashing new firmware"));
-  chkBackupFirmware->setValue(g.enableBackup(), this);
-  chkBackupFirmware->setBindSave([this] {
-    g.enableBackup(this->chkBackupFirmware->isChecked());
-  });
-  layProfiles->addWidget(chkBackupFirmware, row, col++);
-
-  newRow();
-  chkUseSavedSettings = new AutoCheckBox(this, tr("Use radio settings backup for new models and settings files"));
-  chkUseSavedSettings->setValue(g.useSavedSettings(), this);
-  chkUseSavedSettings->setBindSave([this] {
-    g.useSavedSettings(this->chkUseSavedSettings->isChecked());
-  });
-  layProfiles->addWidget(chkUseSavedSettings, row, col++);
-
-  newRow();
-  chkConfirmDeleteWrite = new AutoCheckBox(this, tr("Do not prompt to delete exisiting models on write to radio or SD path"));
-  chkConfirmDeleteWrite->setValue(g.confirmWriteModelsAndSettings(), this);
-  chkConfirmDeleteWrite->setBindSave([this] {
-    g.confirmWriteModelsAndSettings(this->chkConfirmDeleteWrite->isChecked());
-  });
-  layProfiles->addWidget(chkConfirmDeleteWrite, row, col++);
-
-  ui->csectProfiles->finish(row, col, [this] { this->shrink(); });
-
+void PrefsAppPanel::sectionFolders()
+{
   QGridLayout *layFolders = ui->csectFolders->start(tr("Folders"));
   row = col = 0;
 
@@ -183,7 +116,94 @@ PrefsAppPanel::PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, 
  */
 
   ui->csectFolders->finish(-1, -1, [this] { this->shrink(); });
+}
 
+void PrefsAppPanel::sectionGeneral()
+{
+  QGridLayout *layGeneral = ui->csectGeneral->start(tr("General"));
+  row = col = 0;
+  AutoLabel *lblShowSplash = new AutoLabel(this, tr("Show splash screen"));
+  layGeneral->addWidget(lblShowSplash, row, col++);
+  chkSplash = new AutoCheckBox(this);
+  chkSplash->setValue(g.showSplash(), this);
+  chkSplash->setBindSave([this] {
+    g.showSplash(this->chkSplash->isChecked());
+  });
+  layGeneral->addWidget(chkSplash, row, col++);
+
+  newRow();
+  AutoLabel *lblProfPrmpt = new AutoLabel(this, tr("Prompt for radio profile on startup"));
+  layGeneral->addWidget(lblProfPrmpt, row, col++);
+  chkProfPrmpt = new AutoCheckBox(this);
+  chkProfPrmpt->setValue(g.promptProfile(), this);
+  chkProfPrmpt->setBindSave([this] {
+    g.promptProfile(this->chkProfPrmpt->isChecked());
+  });
+  layGeneral->addWidget(chkProfPrmpt, row, col++);
+
+  newRow();
+  AutoLabel *lblRecentFiles = new AutoLabel(this, tr("Most recently used files"));
+  layGeneral->addWidget(lblRecentFiles, row, col++);
+  sbxRecentFiles = new AutoSpinBox(this);
+  sbxRecentFiles->setRange(1, 50);
+  sbxRecentFiles->setValue(g.historySize());
+  sbxRecentFiles->setBindSave([this] {
+    g.historySize(this->sbxRecentFiles->value());
+  });
+  layGeneral->addWidget(sbxRecentFiles, row, col++);
+
+  newRow();
+  AutoLabel *lblModelNew = new AutoLabel(this, tr("New models action"));
+  layGeneral->addWidget(lblModelNew, row, col++);
+  cboModelNew = new AutoComboBox(this);
+  cboModelNew->addItems(AppData::newModelActionsList());
+  cboModelNew->setValue((int)g.newModelAction(), this);
+  cboModelNew->setBindSave([this] {
+    g.newModelAction((AppData::NewModelAction)this->cboModelNew->currentData().toInt());
+  });
+  layGeneral->addWidget(cboModelNew, row, col++);
+
+  //  TODO implement profile level setting as override
+  newRow();
+  AutoLabel *lblModelDelete = new AutoLabel(this, tr("B&W remove empty slot on delete)"));
+  layGeneral->addWidget(lblModelDelete, row, col++);
+  chkModelDelete = new AutoCheckBox(this);
+  chkModelDelete->setValue(g.removeModelSlots(), this);
+  chkModelDelete->setBindSave([this] {
+    g.removeModelSlots(this->chkModelDelete->isChecked());
+  });
+  layGeneral->addWidget(chkModelDelete, row, col++);
+  ui->csectGeneral->finish(row, col, [this] { this->shrink(); }, true);
+}
+
+void PrefsAppPanel::sectionGoogleEarth()
+{
+  QGridLayout *layGoogle = ui->csectGoogleEarth->start(tr("Google Earth"));
+  row = col = 0;
+
+  AutoLabel *lblGoogleExe = new AutoLabel(this, tr("Executable"));
+  layGoogle->addWidget(lblGoogleExe, row, col++);
+
+  leGoogleExe = new AutoLineEdit(this, true);
+  leGoogleExe->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+  leGoogleExe->setClearButtonEnabled(true);
+  leGoogleExe->setValue(g.gePath(), this);
+  leGoogleExe->setEditSignal(true);
+  leGoogleExe->setBindSave([this] {
+    g.gePath(this->leGoogleExe->text());
+  });
+  layGoogle->addWidget(leGoogleExe, row, col++);
+
+  AutoFileSelectButton *btnGoogleExe = new AutoFileSelectButton(this);
+  btnGoogleExe->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+  btnGoogleExe->setup(tr("Select Google Earth executable"), g.gePath(), "", leGoogleExe);;
+  layGoogle->addWidget(btnGoogleExe, row, col++);
+
+  ui->csectGoogleEarth->finish(-1, -1, [this] { this->shrink(); });
+}
+
+void PrefsAppPanel::sectionLogging()
+{
   QGridLayout *layLogging = ui->csectLogging->start(tr("Logging"));
   row = col = 0;
 
@@ -209,30 +229,49 @@ PrefsAppPanel::PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, 
   layLogging->addWidget(chkLogFW, row, col++);
 
   ui->csectLogging->finish(row, col, [this] { this->shrink(); });
+}
 
-  QGridLayout *layGoogle = ui->csectGoogleEarth->start(tr("Google Earth"));
+void PrefsAppPanel::sectionRadioProfiles()
+{
+  QGridLayout *layProfiles = ui->csectProfiles->start(tr("Radio Profiles"));
   row = col = 0;
 
-  AutoLabel *lblGoogleExe = new AutoLabel(this, tr("Executable"));
-  layGoogle->addWidget(lblGoogleExe, row, col++);
-
-  leGoogleExe = new AutoLineEdit(this, true);
-  leGoogleExe->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
-  leGoogleExe->setClearButtonEnabled(true);
-  leGoogleExe->setValue(g.gePath(), this);
-  leGoogleExe->setEditSignal(true);
-  leGoogleExe->setBindSave([this] {
-    g.gePath(this->leGoogleExe->text());
+  chkProfileTop = new AutoCheckBox(this, tr("Move selected profile to the top of the list"));
+  chkProfileTop->setValue(g.sortProfiles(), this);
+  chkProfileTop->setBindSave([this] {
+    g.sortProfiles(this->chkProfileTop->isChecked());
   });
-  layGoogle->addWidget(leGoogleExe, row, col++);
+  layProfiles->addWidget(chkProfileTop, row, col++);
 
-  AutoFileSelectButton *btnGoogleExe = new AutoFileSelectButton(this);
-  btnGoogleExe->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-  btnGoogleExe->setup(tr("Select Google Earth executable"), g.gePath(), "", leGoogleExe);;
-  layGoogle->addWidget(btnGoogleExe, row, col++);
+  newRow();
+  chkBackupFirmware = new AutoCheckBox(this, tr("Prompt to backup current firmware before flashing new firmware"));
+  chkBackupFirmware->setValue(g.enableBackup(), this);
+  chkBackupFirmware->setBindSave([this] {
+    g.enableBackup(this->chkBackupFirmware->isChecked());
+  });
+  layProfiles->addWidget(chkBackupFirmware, row, col++);
 
-  ui->csectGoogleEarth->finish(-1, -1, [this] { this->shrink(); });
+  newRow();
+  chkUseSavedSettings = new AutoCheckBox(this, tr("Use radio settings backup for new models and settings files"));
+  chkUseSavedSettings->setValue(g.useSavedSettings(), this);
+  chkUseSavedSettings->setBindSave([this] {
+    g.useSavedSettings(this->chkUseSavedSettings->isChecked());
+  });
+  layProfiles->addWidget(chkUseSavedSettings, row, col++);
 
+  newRow();
+  chkConfirmDeleteWrite = new AutoCheckBox(this, tr("Do not prompt to delete exisiting models on write to radio or SD path"));
+  chkConfirmDeleteWrite->setValue(g.confirmWriteModelsAndSettings(), this);
+  chkConfirmDeleteWrite->setBindSave([this] {
+    g.confirmWriteModelsAndSettings(this->chkConfirmDeleteWrite->isChecked());
+  });
+  layProfiles->addWidget(chkConfirmDeleteWrite, row, col++);
+
+  ui->csectProfiles->finish(row, col, [this] { this->shrink(); });
+}
+
+void PrefsAppPanel::sectionSplashScreens()
+{
   QGridLayout *laySplash = ui->csectSplash->start(tr("Splash Screens (B&&W radios)"));
   row = col = 0;
 
@@ -267,20 +306,6 @@ PrefsAppPanel::PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, 
   laySplash->addWidget(btnSplashUser, row, col++);
 
   ui->csectSplash->finish(-1, -1, [this] { this->shrink(); });
-
-  update();
-  shrink();
-  lock = false;
-}
-
-PrefsAppPanel::~PrefsAppPanel()
-{
-  delete ui;
-}
-
-void PrefsAppPanel::save()
-{
-  AbstractPanel::save();
 }
 
 void PrefsAppPanel::update()
