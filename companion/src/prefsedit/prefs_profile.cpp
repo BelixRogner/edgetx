@@ -207,24 +207,6 @@ PrefsProfilePanel::PrefsProfilePanel(QWidget * parent, Firmware * fw, Board::Typ
   btnSDPath->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
   btnSDPath->setup(tr("Select SD path folder"), profile.sdPath(), leSDPath);;
   layFolders->addWidget(btnSDPath, row, col++);
-  // Models path
-  newRow();
-  AutoLabel *lblModelsPath = new AutoLabel(this, tr("Models"));
-  layFolders->addWidget(lblModelsPath, row, col++);
-
-  leModelsPath = new AutoLineEdit(this, true);
-  leModelsPath->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
-  leModelsPath->setValue(profile.modelsDir(), this);
-  leModelsPath->setEditSignal(true);
-  leModelsPath->setBindSave([this] {
-    this->profile.modelsDir(this->leModelsPath->text());
-  });
-  layFolders->addWidget(leModelsPath, row, col++);
-
-  AutoDirectorySelectButton *btnModelsPath = new AutoDirectorySelectButton(this);
-  btnModelsPath->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-  btnModelsPath->setup(tr("Select models folder"), profile.modelsDir(), leModelsPath);;
-  layFolders->addWidget(btnModelsPath, row, col++);
   // Backups path
   newRow();
   AutoLabel *lblBackupsPath = new AutoLabel(this, tr("Backups"));
@@ -243,6 +225,26 @@ PrefsProfilePanel::PrefsProfilePanel(QWidget * parent, Firmware * fw, Board::Typ
   btnBackupsPath->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
   btnBackupsPath->setup(tr("Select backups folder"), profile.pBackupDir(), leBackupsPath);;
   layFolders->addWidget(btnBackupsPath, row, col++);
+
+  /*  TODO implement
+  newRow();
+  AutoLabel *lblModelsPath = new AutoLabel(this, tr("Models"));
+  layFolders->addWidget(lblModelsPath, row, col++);
+
+  leModelsPath = new AutoLineEdit(this, true);
+  leModelsPath->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+  leModelsPath->setValue(profile.modelsDir(), this);
+  leModelsPath->setEditSignal(true);
+  leModelsPath->setBindSave([this] {
+    this->profile.modelsDir(this->leModelsPath->text());
+  });
+  layFolders->addWidget(leModelsPath, row, col++);
+
+  AutoDirectorySelectButton *btnModelsPath = new AutoDirectorySelectButton(this);
+  btnModelsPath->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+  btnModelsPath->setup(tr("Select models folder"), profile.modelsDir(), leModelsPath);;
+  layFolders->addWidget(btnModelsPath, row, col++);
+ */
 
   //addHSpring(layFolders, col, row); Do not use as stops folder paths from expanding to available space
   ui->csectFolders->setContentLayout(*layFolders);

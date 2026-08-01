@@ -101,7 +101,7 @@ QGridLayout * AutoCollapsibleSection::start(const QString & title)
   return contentAreaLayout;
 }
 
-void AutoCollapsibleSection::finish(int springRow, int springCol, std::function<void()> fnResize)
+void AutoCollapsibleSection::finish(int springRow, int springCol, std::function<void()> fnResize, bool expand)
 {
   if (springRow >= 0 && springCol >= 0) {
     QSpacerItem * spacer = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum );
@@ -111,11 +111,17 @@ void AutoCollapsibleSection::finish(int springRow, int springCol, std::function<
   // attach after constructed for better sizing
   setContentLayout(*contentAreaLayout);
   setBindResize(fnResize);
+  toggleButton->setChecked(expand);
 }
 
 void AutoCollapsibleSection::setAnimationDuration(const int duration)
 {
   animationDuration = duration;
+}
+
+void AutoCollapsibleSection::setBindResize(std::function<void()> fn)
+{
+  fnResize = std::move(fn);
 }
 
 void AutoCollapsibleSection::setContentLayout(QLayout & contentLayout)
@@ -162,9 +168,4 @@ void AutoCollapsibleSection::updateHeights()
   toggleAnimation->setDirection(isExpanded ? QAbstractAnimation::Forward :
                                              QAbstractAnimation::Backward);
   toggleAnimation->start();
-}
-
-void AutoCollapsibleSection::setBindResize(std::function<void()> fn)
-{
-  fnResize = std::move(fn);
 }

@@ -73,8 +73,9 @@ PrefsAppPanel::PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, 
   });
   layGeneral->addWidget(cboModelNew, row, col++);
 
+  //  TODO implement profile level setting as override
   newRow();
-  AutoLabel *lblModelDelete = new AutoLabel(this, tr("Remove empty slot on model delete (B&W radios)"));
+  AutoLabel *lblModelDelete = new AutoLabel(this, tr("B&W remove empty slot on delete)"));
   layGeneral->addWidget(lblModelDelete, row, col++);
   chkModelDelete = new AutoCheckBox(this);
   chkModelDelete->setValue(g.removeModelSlots(), this);
@@ -82,7 +83,7 @@ PrefsAppPanel::PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, 
     g.removeModelSlots(this->chkModelDelete->isChecked());
   });
   layGeneral->addWidget(chkModelDelete, row, col++);
-  ui->csectGeneral->finish(row, col, [this] { this->shrink(); });
+  ui->csectGeneral->finish(row, col, [this] { this->shrink(); }, true);
 
   QGridLayout *layProfiles = ui->csectProfiles->start(tr("Radio Profiles"));
   row = col = 0;
@@ -123,29 +124,12 @@ PrefsAppPanel::PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, 
   QGridLayout *layFolders = ui->csectFolders->start(tr("Folders"));
   row = col = 0;
 
-  AutoLabel *lblSDPath = new AutoLabel(this, tr("Models"));
-  layFolders->addWidget(lblSDPath, row, col++);
-
-  leModelsPath = new AutoLineEdit(this, true);
-  leModelsPath->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
-  leModelsPath->setValue(g.modelsDir(), this);
-  leModelsPath->setEditSignal(true);
-  leModelsPath->setBindSave([this] {
-    g.modelsDir(this->leModelsPath->text());
-  });
-  layFolders->addWidget(leModelsPath, row, col++);
-
-  AutoDirectorySelectButton *btnModelsPath = new AutoDirectorySelectButton(this);
-  btnModelsPath->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-  btnModelsPath->setup(tr("Select models folder"), g.modelsDir(), leModelsPath);;
-  layFolders->addWidget(btnModelsPath, row, col++);
-
-  newRow();
   AutoLabel *lblBackupsPath = new AutoLabel(this, tr("Backups"));
   layFolders->addWidget(lblBackupsPath, row, col++);
 
   leBackupsPath = new AutoLineEdit(this, true);
   leBackupsPath->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+  leBackupsPath->setClearButtonEnabled(true);
   leBackupsPath->setValue(g.backupDir(), this);
   leBackupsPath->setEditSignal(true);
   leBackupsPath->setBindSave([this] {
@@ -164,6 +148,7 @@ PrefsAppPanel::PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, 
 
   leLogsPath = new AutoLineEdit(this, true);
   leLogsPath->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+  leLogsPath->setClearButtonEnabled(true);
   leLogsPath->setValue(g.logDir(), this);
   leLogsPath->setEditSignal(true);
   leLogsPath->setBindSave([this] {
@@ -175,6 +160,27 @@ PrefsAppPanel::PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, 
   btnLogsPath->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
   btnLogsPath->setup(tr("Select logs folder"), g.logDir(), leLogsPath);;
   layFolders->addWidget(btnLogsPath, row, col++);
+
+  /*  TODO implement
+  newRow();
+  AutoLabel *lblSDPath = new AutoLabel(this, tr("Models"));
+  layFolders->addWidget(lblSDPath, row, col++);
+
+  leModelsPath = new AutoLineEdit(this, true);
+  leModelsPath->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+  leModelsPath->setClearButtonEnabled(true);
+  leModelsPath->setValue(g.modelsDir(), this);
+  leModelsPath->setEditSignal(true);
+  leModelsPath->setBindSave([this] {
+    g.modelsDir(this->leModelsPath->text());
+  });
+  layFolders->addWidget(leModelsPath, row, col++);
+
+  AutoDirectorySelectButton *btnModelsPath = new AutoDirectorySelectButton(this);
+  btnModelsPath->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+  btnModelsPath->setup(tr("Select models folder"), g.modelsDir(), leModelsPath);;
+  layFolders->addWidget(btnModelsPath, row, col++);
+ */
 
   ui->csectFolders->finish(-1, -1, [this] { this->shrink(); });
 
@@ -202,29 +208,6 @@ PrefsAppPanel::PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, 
   });
   layLogging->addWidget(chkLogFW, row, col++);
 
-  newRow();
-  AutoLabel *lblLogLevel = new AutoLabel(this, tr("Level"));
-  layLogging->addWidget(lblLogLevel, row, col++);
-
-  cboLogLevel = new AutoComboBox(this);
-  cboLogLevel->addItems(AppData::updateLogLevelsList());
-  cboLogLevel->setValue((int)g.updLogLevel(), this);
-  cboLogLevel->setBindSave([this] {
-    g.updLogLevel(this->cboLogLevel->currentData().toInt());
-  });
-  layLogging->addWidget(cboLogLevel, row, col++);
-
-  newRow();
-  AutoLabel *lblLogVerbose = new AutoLabel(this, tr("Verbose"));
-  layLogging->addWidget(lblLogVerbose, row, col++);
-
-  chkLogVerbose = new AutoCheckBox(this);
-  chkLogVerbose->setValue(g.logVerbose(), this);
-  chkLogVerbose->setBindSave([this] {
-    g.logVerbose(this->chkLogVerbose->isChecked());
-  });
-  layLogging->addWidget(chkLogVerbose, row, col++);
-
   ui->csectLogging->finish(row, col, [this] { this->shrink(); });
 
   QGridLayout *layGoogle = ui->csectGoogleEarth->start(tr("Google Earth"));
@@ -235,6 +218,7 @@ PrefsAppPanel::PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, 
 
   leGoogleExe = new AutoLineEdit(this, true);
   leGoogleExe->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+  leGoogleExe->setClearButtonEnabled(true);
   leGoogleExe->setValue(g.gePath(), this);
   leGoogleExe->setEditSignal(true);
   leGoogleExe->setBindSave([this] {
@@ -269,6 +253,7 @@ PrefsAppPanel::PrefsAppPanel(QWidget * parent, Firmware * fw, Board::Type & bd, 
 
   leSplashUserPath = new AutoLineEdit(this, true);
   leSplashUserPath->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+  leSplashUserPath->setClearButtonEnabled(true);
   leSplashUserPath->setValue(g.libDir(), this);
   leSplashUserPath->setEditSignal(true);
   leSplashUserPath->setBindSave([this] {

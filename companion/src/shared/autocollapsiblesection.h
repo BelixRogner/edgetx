@@ -62,7 +62,7 @@ class AutoCollapsibleSection : public QWidget, public AutoWidget
     virtual void updateValue() override {}
 
     QGridLayout * start(const QString & title);
-    void finish(int row = -1, int col = -1, std::function<void()> fnResize = nullptr);
+    void finish(int row = -1, int col = -1, std::function<void()> fnResize = nullptr, bool expand = false);
 
     // setters
     void setAnimationDuration(const int duration);
