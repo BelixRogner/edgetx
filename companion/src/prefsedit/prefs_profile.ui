@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>710</width>
-    <height>553</height>
+    <height>184</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -145,13 +145,13 @@
     </widget>
    </item>
    <item>
-    <widget class="AutoCollapsibleSection" name="csectNewFile" native="true"/>
+    <widget class="AutoCollapsibleSection" name="csectFirmwareOpts" native="true"/>
    </item>
    <item>
     <widget class="AutoCollapsibleSection" name="csectFolders" native="true"/>
    </item>
    <item>
-    <widget class="AutoCollapsibleSection" name="csectFirmwareOpts" native="true"/>
+    <widget class="AutoCollapsibleSection" name="csectNewFile" native="true"/>
    </item>
    <item>
     <widget class="AutoCollapsibleSection" name="csectSplash" native="true"/>

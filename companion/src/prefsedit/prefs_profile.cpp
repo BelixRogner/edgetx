@@ -79,261 +79,10 @@ PrefsProfilePanel::PrefsProfilePanel(QWidget * parent, Firmware * fw, Board::Typ
     emit radioChanged(this->firmware);
   });
 
-  // new file
-  row = col = 0;
-  ui->csectNewFile->setTitle(tr("New Models and Settings Files"));
-  QGridLayout *layNewFile = new QGridLayout();
-  // Use backup settings
-  AutoLabel *lblUseSettingsBackup = new AutoLabel(this, tr("Use backup settings"));
-  layNewFile->addWidget(lblUseSettingsBackup, row, col++);
-  chkUseSettingsBackup = new AutoCheckBox(this, " ");
-  chkUseSettingsBackup->setValue(profile.useSavedSettings(), this);
-  chkUseSettingsBackup->setBindSave([this] {
-    this->profile.useSavedSettings(this->chkUseSettingsBackup->isChecked());
-  });
-  chkUseSettingsBackup->setBindPostChanged([this] { this->update(); });
-  layNewFile->addWidget(chkUseSettingsBackup, row, col++);
-
-  newRow();
-  lblSettingsBackup = new AutoLabel(this);
-  lblSettingsBackup->setBindText([this] (){
-    if (profile.generalSettings().isEmpty()) {
-      return tr("No backup available for this profile");
-    } else {
-      QString str = profile.timeStamp();
-      if (str.isEmpty())
-        return tr("Backup available of unknown age");
-      else
-        return tr("Backup available dated %1").arg(str);
-    }
-  });
-  layNewFile->addWidget(lblSettingsBackup, row, 1);
-
-  // Stick Mode
-  newRow();
-  AutoLabel *lblStickMode = new AutoLabel(this, tr("Default Stick Mode"));
-  lblStickMode->setBindEnabled([this] {
-    return (!this->chkUseSettingsBackup->isChecked() ||
-            (this->chkUseSettingsBackup->isChecked() &&
-             this->profile.generalSettings().isEmpty()));
-  });
-  lblStickMode->setBindVisible([this] { return Boards::isAir(); });
-  layNewFile->addWidget(lblStickMode, row, col++);
-
-  cboStickMode = new AutoComboBox(this);
-  cboStickMode->setModel(GeneralSettings::stickModeItemModel());
-  cboStickMode->setValue(profile.defaultMode(), this);
-  cboStickMode->setBindSave([this] {
-    this->profile.defaultMode(this->cboStickMode->currentData().toInt());
-  });
-  cboStickMode->setBindEnabled([this] {
-    return (!this->chkUseSettingsBackup->isChecked() ||
-            (this->chkUseSettingsBackup->isChecked() &&
-             this->profile.generalSettings().isEmpty()));
-  });
-  cboStickMode->setBindVisible([this] { return Boards::isAir(); });
-  layNewFile->addWidget(cboStickMode, row, col++);
-  // Channel Order
-  newRow();
-  AutoLabel *lblChannelOrder = new AutoLabel(this, tr("Default Channel Order"));
-  lblChannelOrder->setBindEnabled([this] {
-    return (!this->chkUseSettingsBackup->isChecked() ||
-            (this->chkUseSettingsBackup->isChecked() &&
-             this->profile.generalSettings().isEmpty()));
-  });
-  layNewFile->addWidget(lblChannelOrder, row, col++);
-
-  cboChannelOrder = new AutoComboBox(this);
-  cboChannelOrder->setModel(panelItemModels->getItemModel(FIM_TEMPLATESETUP));
-  cboChannelOrder->setValue(profile.channelOrder(), this);
-  cboChannelOrder->setBindSave([this] {
-    this->profile.channelOrder(this->cboChannelOrder->currentData().toInt());
-  });
-  cboChannelOrder->setBindEnabled([this] {
-    return (!this->chkUseSettingsBackup->isChecked() ||
-            (this->chkUseSettingsBackup->isChecked() &&
-             this->profile.generalSettings().isEmpty()));
-  });
-  layNewFile->addWidget(cboChannelOrder, row, col++);
-  // Internal Module
-  newRow();
-  AutoLabel *lblModuleInternal = new AutoLabel(this, tr("Default Internal Module"));
-  layNewFile->addWidget(lblModuleInternal, row, col++);
-  cboModuleInternal = new AutoComboBox(this);
-  cboModuleInternal->setModel(ModuleData::internalModuleItemModel());
-  cboModuleInternal->setValue(profile.defaultInternalModule(), this);
-  cboModuleInternal->setBindSave([this] {
-    profile.defaultInternalModule(this->cboModuleInternal->currentData().toInt());
-  });
-  layNewFile->addWidget(cboModuleInternal, row, col++);
-  // External Module
-  newRow();
-  AutoLabel *lblModuleExternal = new AutoLabel(this, tr("External Module Size"));
-  layNewFile->addWidget(lblModuleExternal, row, col++);
-
-  cboModuleExternal = new AutoComboBox(this);
-  cboModuleExternal->setModel(Boards::externalModuleSizeItemModel());
-  cboModuleExternal->setValue(profile.externalModuleSize(), this);
-  cboModuleExternal->setBindSave([this] {
-    this->profile.externalModuleSize(this->cboModuleExternal->currentData().toInt());
-  });
-  layNewFile->addWidget(cboModuleExternal, row, col++);
-
-  addHSpring(layNewFile, col, row);
-  ui->csectNewFile->setContentLayout(*layNewFile);
-  ui->csectNewFile->setBindResize([this] { this->shrink(); });
-
-  // folders
-  row = col = 0;
-  ui->csectFolders->setTitle(tr("Folders"));
-  QGridLayout *layFolders = new QGridLayout();
-  // SD Path
-  AutoLabel *lblSDPath = new AutoLabel(this, tr("SD Path"));
-  layFolders->addWidget(lblSDPath, row, col++);
-
-  leSDPath = new AutoLineEdit(this, true);
-  leSDPath->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
-  leSDPath->setValue(profile.sdPath(), this);
-  leSDPath->setEditSignal(true);
-  leSDPath->setBindSave([this] {
-    this->profile.sdPath(this->leSDPath->text());
-  });
-  leSDPath->setBindPostChanged([this] {
-    emit this->sdPathChanged(this->leSDPath->text());
-  });
-  layFolders->addWidget(leSDPath, row, col++);
-
-  AutoDirectorySelectButton *btnSDPath = new AutoDirectorySelectButton(this);
-  btnSDPath->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-  btnSDPath->setup(tr("Select SD path folder"), profile.sdPath(), leSDPath);;
-  layFolders->addWidget(btnSDPath, row, col++);
-  // Backups path
-  newRow();
-  AutoLabel *lblBackupsPath = new AutoLabel(this, tr("Backups"));
-  layFolders->addWidget(lblBackupsPath, row, col++);
-
-  leBackupsPath = new AutoLineEdit(this, true);
-  leBackupsPath->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
-  leBackupsPath->setValue(profile.pBackupDir(), this);
-  leBackupsPath->setEditSignal(true);
-  leBackupsPath->setBindSave([this] {
-    this->profile.pBackupDir(this->leBackupsPath->text());
-  });
-  layFolders->addWidget(leBackupsPath, row, col++);
-
-  AutoDirectorySelectButton *btnBackupsPath = new AutoDirectorySelectButton(this);
-  btnBackupsPath->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-  btnBackupsPath->setup(tr("Select backups folder"), profile.pBackupDir(), leBackupsPath);;
-  layFolders->addWidget(btnBackupsPath, row, col++);
-
-  /*  TODO implement
-  newRow();
-  AutoLabel *lblModelsPath = new AutoLabel(this, tr("Models"));
-  layFolders->addWidget(lblModelsPath, row, col++);
-
-  leModelsPath = new AutoLineEdit(this, true);
-  leModelsPath->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
-  leModelsPath->setValue(profile.modelsDir(), this);
-  leModelsPath->setEditSignal(true);
-  leModelsPath->setBindSave([this] {
-    this->profile.modelsDir(this->leModelsPath->text());
-  });
-  layFolders->addWidget(leModelsPath, row, col++);
-
-  AutoDirectorySelectButton *btnModelsPath = new AutoDirectorySelectButton(this);
-  btnModelsPath->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-  btnModelsPath->setup(tr("Select models folder"), profile.modelsDir(), leModelsPath);;
-  layFolders->addWidget(btnModelsPath, row, col++);
- */
-
-  //addHSpring(layFolders, col, row); Do not use as stops folder paths from expanding to available space
-  ui->csectFolders->setContentLayout(*layFolders);
-  ui->csectFolders->setBindResize([this] { this->shrink(); });
-
-  // options  TODO split into those supported by Cloud Build and others
-  row = col = 0;
-  ui->csectFirmwareOpts->setTitle(tr("Firmware Options"));
-  QGridLayout *layFirmwareOpts = new QGridLayout();
-
-  // language
-  QLabel *lblFirmwareLanguage = new QLabel(tr("Language"), this);
-  layFirmwareOpts->addWidget(lblFirmwareLanguage, row, col++);
-
-  cboFirmwareLanguage = new AutoComboBox(this);
-  cboFirmwareLanguage->setModel(languageModel());
-  cboFirmwareLanguage->setValue(profile.fwLanguage(), this);
-  cboFirmwareLanguage->setBindSave([this] {
-    this->profile.fwLanguage(this->cboFirmwareLanguage->currentData().toString());
-  });
-  layFirmwareOpts->addWidget(cboFirmwareLanguage, row, col++);
-  // other options
-  newRow();
-  AutoLabel *lblFirmwareOptions = new AutoLabel(this, tr("Options"));
-  layFirmwareOpts->addWidget(lblFirmwareOptions, row, col++, Qt::AlignTop);
-
-  layFirmwareBuildOpts = new QGridLayout();
-  layFirmwareOpts->addLayout(layFirmwareBuildOpts, row, col++);
-  populateFirmwareOptions(profile.fwOptions().split("-", Qt::SkipEmptyParts));
-  // flashing
-  newRow();
-  AutoLabel *lblFlashingOptions = new AutoLabel(this, tr("Flashing"));
-  layFirmwareOpts->addWidget(lblFlashingOptions, row, col++);
-
-  chkBackupBeforeFlash = new AutoCheckBox(this, tr("prompt to backup current firmware before flashing"));
-  chkBackupBeforeFlash->setValue(profile.penableBackup(), this);
-  chkBackupBeforeFlash->setBindSave([this] {
-    this->profile.penableBackup(this->chkBackupBeforeFlash->isChecked());
-  });
-  layFirmwareOpts->addWidget(chkBackupBeforeFlash, row, col++);
-  addHSpring(layFirmwareOpts, col, row);
-  ui->csectFirmwareOpts->setContentLayout(*layFirmwareOpts);
-  ui->csectFirmwareOpts->setBindResize([this] { this->shrink(); });
-
-  // firmware splash
-  row = col = 0;
-  ui->csectSplash->setTitle(tr("Splash Screen"));
-  ui->csectSplash->setBindVisible([this] {
-    return !Boards::getCapability(this->board, Board::HasColorLcd);
-  });
-  QGridLayout *laySplash = new QGridLayout();
-  // Splash path
-  leSplashPath = new AutoLineEdit(this, true);
-  leSplashPath->setValue(profile.splashFile(), this);
-
-  leSplashPath->setBindSave([this] {
-    this->profile.splashFile(this->leSplashPath->text());
-  });
-  laySplash->addWidget(leSplashPath, row, col++);
-  // Splash folder select
-  AutoFileSelectButton *btnSplashSelect = new AutoFileSelectButton(this);
-  btnSplashSelect->setup(tr("Open Image to load"), g.imagesDir(),
-                         tr("Images (%1)").arg(getSplashFileFilter()), leSplashPath);
-  btnSplashSelect->setBindPostChanged([this] {
-    if (!this->leSplashPath->text().isEmpty()){
-      g.imagesDir(QFileInfo(this->leSplashPath->text()).dir().absolutePath());
-    }
-  });
-  laySplash->addWidget(btnSplashSelect, row, col++);
-  // Splash image
-  newRow();
-  imgSplash = new AutoImage(this, leSplashPath->text());
-  // change of firmware and thus board can effect the image
-  imgSplash->setBindPreUpdate([this] {
-    imgSplash->setDimensions(Boards::getCapability(board, Board::LcdWidth),
-                             Boards::getCapability(board, Board::LcdHeight),
-                             Boards::getCapability(board, Board::LcdDepth));
-  });
-  laySplash->addWidget(imgSplash, row, col++);
-  // Splash clear
-  AutoPushButton *btnSplashClear = new AutoPushButton(this, tr("Clear"));
-  btnSplashClear->setBindClicked([this] {
-    this->imgSplash->clear();
-    this->leSplashPath->clear();
-  });
-  laySplash->addWidget(btnSplashClear, row, col++);
-  addHSpring(laySplash, col, row);
-  ui->csectSplash->setContentLayout(*laySplash);
-  ui->csectSplash->setBindResize([this] { this->shrink(); });
+  sectionNewFile();
+  sectionFolders();
+  sectionFirmwareOpts();
+  sectionSplash();
 
   update();
   shrink();
@@ -495,6 +244,271 @@ QStringList PrefsProfilePanel::getSelectedOptions()
   }
 
   return opts;
+}
+
+// options  TODO split into those supported by Cloud Build and others
+void PrefsProfilePanel::sectionFirmwareOpts()
+{
+  row = col = 0;
+  ui->csectFirmwareOpts->setTitle(tr("Firmware Options"));
+  QGridLayout *layFirmwareOpts = new QGridLayout();
+
+  // language
+  QLabel *lblFirmwareLanguage = new QLabel(tr("Language"), this);
+  layFirmwareOpts->addWidget(lblFirmwareLanguage, row, col++);
+
+  cboFirmwareLanguage = new AutoComboBox(this);
+  cboFirmwareLanguage->setModel(languageModel());
+  cboFirmwareLanguage->setValue(profile.fwLanguage(), this);
+  cboFirmwareLanguage->setBindSave([this] {
+    this->profile.fwLanguage(this->cboFirmwareLanguage->currentData().toString());
+  });
+  layFirmwareOpts->addWidget(cboFirmwareLanguage, row, col++);
+  // other options
+  newRow();
+  AutoLabel *lblFirmwareOptions = new AutoLabel(this, tr("Options"));
+  layFirmwareOpts->addWidget(lblFirmwareOptions, row, col++, Qt::AlignTop);
+
+  layFirmwareBuildOpts = new QGridLayout();
+  layFirmwareOpts->addLayout(layFirmwareBuildOpts, row, col++);
+  populateFirmwareOptions(profile.fwOptions().split("-", Qt::SkipEmptyParts));
+  // flashing
+  newRow();
+  AutoLabel *lblFlashingOptions = new AutoLabel(this, tr("Flashing"));
+  layFirmwareOpts->addWidget(lblFlashingOptions, row, col++);
+
+  chkBackupBeforeFlash = new AutoCheckBox(this, tr("prompt to backup current firmware before flashing"));
+  chkBackupBeforeFlash->setValue(profile.penableBackup(), this);
+  chkBackupBeforeFlash->setBindSave([this] {
+    this->profile.penableBackup(this->chkBackupBeforeFlash->isChecked());
+  });
+  layFirmwareOpts->addWidget(chkBackupBeforeFlash, row, col++);
+  addHSpring(layFirmwareOpts, col, row);
+  ui->csectFirmwareOpts->setContentLayout(*layFirmwareOpts);
+  ui->csectFirmwareOpts->setBindResize([this] { this->shrink(); });
+}
+
+void PrefsProfilePanel::sectionFolders()
+{
+  row = col = 0;
+  ui->csectFolders->setTitle(tr("Folders"));
+  QGridLayout *layFolders = new QGridLayout();
+  // SD Path
+  AutoLabel *lblSDPath = new AutoLabel(this, tr("SD Path"));
+  layFolders->addWidget(lblSDPath, row, col++);
+
+  leSDPath = new AutoLineEdit(this, true);
+  leSDPath->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+  leSDPath->setValue(profile.sdPath(), this);
+  leSDPath->setEditSignal(true);
+  leSDPath->setBindSave([this] {
+    this->profile.sdPath(this->leSDPath->text());
+  });
+  leSDPath->setBindPostChanged([this] {
+    emit this->sdPathChanged(this->leSDPath->text());
+  });
+  layFolders->addWidget(leSDPath, row, col++);
+
+  AutoDirectorySelectButton *btnSDPath = new AutoDirectorySelectButton(this);
+  btnSDPath->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+  btnSDPath->setup(tr("Select SD path folder"), profile.sdPath(), leSDPath);;
+  layFolders->addWidget(btnSDPath, row, col++);
+  // Backups path
+  newRow();
+  AutoLabel *lblBackupsPath = new AutoLabel(this, tr("Backups"));
+  layFolders->addWidget(lblBackupsPath, row, col++);
+
+  leBackupsPath = new AutoLineEdit(this, true);
+  leBackupsPath->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+  leBackupsPath->setValue(profile.pBackupDir(), this);
+  leBackupsPath->setEditSignal(true);
+  leBackupsPath->setBindSave([this] {
+    this->profile.pBackupDir(this->leBackupsPath->text());
+  });
+  layFolders->addWidget(leBackupsPath, row, col++);
+
+  AutoDirectorySelectButton *btnBackupsPath = new AutoDirectorySelectButton(this);
+  btnBackupsPath->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+  btnBackupsPath->setup(tr("Select backups folder"), profile.pBackupDir(), leBackupsPath);;
+  layFolders->addWidget(btnBackupsPath, row, col++);
+
+  /*  TODO implement
+  newRow();
+  AutoLabel *lblModelsPath = new AutoLabel(this, tr("Models"));
+  layFolders->addWidget(lblModelsPath, row, col++);
+
+  leModelsPath = new AutoLineEdit(this, true);
+  leModelsPath->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+  leModelsPath->setValue(profile.modelsDir(), this);
+  leModelsPath->setEditSignal(true);
+  leModelsPath->setBindSave([this] {
+    this->profile.modelsDir(this->leModelsPath->text());
+  });
+  layFolders->addWidget(leModelsPath, row, col++);
+
+  AutoDirectorySelectButton *btnModelsPath = new AutoDirectorySelectButton(this);
+  btnModelsPath->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+  btnModelsPath->setup(tr("Select models folder"), profile.modelsDir(), leModelsPath);;
+  layFolders->addWidget(btnModelsPath, row, col++);
+ */
+
+  //addHSpring(layFolders, col, row); Do not use as stops folder paths from expanding to available space
+  ui->csectFolders->setContentLayout(*layFolders);
+  ui->csectFolders->setBindResize([this] { this->shrink(); });
+}
+
+void PrefsProfilePanel::sectionNewFile()
+{
+  row = col = 0;
+  ui->csectNewFile->setTitle(tr("New Models and Settings Files"));
+  QGridLayout *layNewFile = new QGridLayout();
+  // Use backup settings
+  AutoLabel *lblUseSettingsBackup = new AutoLabel(this, tr("Use backup settings"));
+  layNewFile->addWidget(lblUseSettingsBackup, row, col++);
+  chkUseSettingsBackup = new AutoCheckBox(this, " ");
+  chkUseSettingsBackup->setValue(profile.useSavedSettings(), this);
+  chkUseSettingsBackup->setBindSave([this] {
+    this->profile.useSavedSettings(this->chkUseSettingsBackup->isChecked());
+  });
+  chkUseSettingsBackup->setBindPostChanged([this] { this->update(); });
+  layNewFile->addWidget(chkUseSettingsBackup, row, col++);
+
+  newRow();
+  lblSettingsBackup = new AutoLabel(this);
+  lblSettingsBackup->setBindText([this] (){
+    if (profile.generalSettings().isEmpty()) {
+      return tr("No backup available for this profile");
+    } else {
+      QString str = profile.timeStamp();
+      if (str.isEmpty())
+        return tr("Backup available of unknown age");
+      else
+        return tr("Backup available dated %1").arg(str);
+    }
+  });
+  layNewFile->addWidget(lblSettingsBackup, row, 1);
+
+  // Stick Mode
+  newRow();
+  AutoLabel *lblStickMode = new AutoLabel(this, tr("Default Stick Mode"));
+  lblStickMode->setBindEnabled([this] {
+    return (!this->chkUseSettingsBackup->isChecked() ||
+            (this->chkUseSettingsBackup->isChecked() &&
+             this->profile.generalSettings().isEmpty()));
+  });
+  lblStickMode->setBindVisible([this] { return Boards::isAir(); });
+  layNewFile->addWidget(lblStickMode, row, col++);
+
+  cboStickMode = new AutoComboBox(this);
+  cboStickMode->setModel(GeneralSettings::stickModeItemModel());
+  cboStickMode->setValue(profile.defaultMode(), this);
+  cboStickMode->setBindSave([this] {
+    this->profile.defaultMode(this->cboStickMode->currentData().toInt());
+  });
+  cboStickMode->setBindEnabled([this] {
+    return (!this->chkUseSettingsBackup->isChecked() ||
+            (this->chkUseSettingsBackup->isChecked() &&
+             this->profile.generalSettings().isEmpty()));
+  });
+  cboStickMode->setBindVisible([this] { return Boards::isAir(); });
+  layNewFile->addWidget(cboStickMode, row, col++);
+  // Channel Order
+  newRow();
+  AutoLabel *lblChannelOrder = new AutoLabel(this, tr("Default Channel Order"));
+  lblChannelOrder->setBindEnabled([this] {
+    return (!this->chkUseSettingsBackup->isChecked() ||
+            (this->chkUseSettingsBackup->isChecked() &&
+             this->profile.generalSettings().isEmpty()));
+  });
+  layNewFile->addWidget(lblChannelOrder, row, col++);
+
+  cboChannelOrder = new AutoComboBox(this);
+  cboChannelOrder->setModel(panelItemModels->getItemModel(FIM_TEMPLATESETUP));
+  cboChannelOrder->setValue(profile.channelOrder(), this);
+  cboChannelOrder->setBindSave([this] {
+    this->profile.channelOrder(this->cboChannelOrder->currentData().toInt());
+  });
+  cboChannelOrder->setBindEnabled([this] {
+    return (!this->chkUseSettingsBackup->isChecked() ||
+            (this->chkUseSettingsBackup->isChecked() &&
+             this->profile.generalSettings().isEmpty()));
+  });
+  layNewFile->addWidget(cboChannelOrder, row, col++);
+  // Internal Module
+  newRow();
+  AutoLabel *lblModuleInternal = new AutoLabel(this, tr("Default Internal Module"));
+  layNewFile->addWidget(lblModuleInternal, row, col++);
+  cboModuleInternal = new AutoComboBox(this);
+  cboModuleInternal->setModel(ModuleData::internalModuleItemModel());
+  cboModuleInternal->setValue(profile.defaultInternalModule(), this);
+  cboModuleInternal->setBindSave([this] {
+    profile.defaultInternalModule(this->cboModuleInternal->currentData().toInt());
+  });
+  layNewFile->addWidget(cboModuleInternal, row, col++);
+  // External Module
+  newRow();
+  AutoLabel *lblModuleExternal = new AutoLabel(this, tr("External Module Size"));
+  layNewFile->addWidget(lblModuleExternal, row, col++);
+
+  cboModuleExternal = new AutoComboBox(this);
+  cboModuleExternal->setModel(Boards::externalModuleSizeItemModel());
+  cboModuleExternal->setValue(profile.externalModuleSize(), this);
+  cboModuleExternal->setBindSave([this] {
+    this->profile.externalModuleSize(this->cboModuleExternal->currentData().toInt());
+  });
+  layNewFile->addWidget(cboModuleExternal, row, col++);
+
+  addHSpring(layNewFile, col, row);
+  ui->csectNewFile->setContentLayout(*layNewFile);
+  ui->csectNewFile->setBindResize([this] { this->shrink(); });
+}
+
+void PrefsProfilePanel::sectionSplash()
+{
+  row = col = 0;
+  ui->csectSplash->setTitle(tr("Splash Screen"));
+  ui->csectSplash->setBindVisible([this] {
+    return !Boards::getCapability(this->board, Board::HasColorLcd);
+  });
+  QGridLayout *laySplash = new QGridLayout();
+  // Splash path
+  leSplashPath = new AutoLineEdit(this, true);
+  leSplashPath->setValue(profile.splashFile(), this);
+
+  leSplashPath->setBindSave([this] {
+    this->profile.splashFile(this->leSplashPath->text());
+  });
+  laySplash->addWidget(leSplashPath, row, col++);
+  // Splash folder select
+  AutoFileSelectButton *btnSplashSelect = new AutoFileSelectButton(this);
+  btnSplashSelect->setup(tr("Open Image to load"), g.imagesDir(),
+                         tr("Images (%1)").arg(getSplashFileFilter()), leSplashPath);
+  btnSplashSelect->setBindPostChanged([this] {
+    if (!this->leSplashPath->text().isEmpty()){
+      g.imagesDir(QFileInfo(this->leSplashPath->text()).dir().absolutePath());
+    }
+  });
+  laySplash->addWidget(btnSplashSelect, row, col++);
+  // Splash image
+  newRow();
+  imgSplash = new AutoImage(this, leSplashPath->text());
+  // change of firmware and thus board can effect the image
+  imgSplash->setBindPreUpdate([this] {
+    imgSplash->setDimensions(Boards::getCapability(board, Board::LcdWidth),
+                             Boards::getCapability(board, Board::LcdHeight),
+                             Boards::getCapability(board, Board::LcdDepth));
+  });
+  laySplash->addWidget(imgSplash, row, col++);
+  // Splash clear
+  AutoPushButton *btnSplashClear = new AutoPushButton(this, tr("Clear"));
+  btnSplashClear->setBindClicked([this] {
+    this->imgSplash->clear();
+    this->leSplashPath->clear();
+  });
+  laySplash->addWidget(btnSplashClear, row, col++);
+  addHSpring(laySplash, col, row);
+  ui->csectSplash->setContentLayout(*laySplash);
+  ui->csectSplash->setBindResize([this] { this->shrink(); });
 }
 
 void PrefsProfilePanel::undoFirmwareChange()

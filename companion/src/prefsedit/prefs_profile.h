@@ -78,4 +78,9 @@ class PrefsProfilePanel : public PrefsPanel
     QStringList getSelectedOptions();
     QString getSplashFileFilter();
     void displayImage(const QString & fileName);
+
+    void sectionFirmwareOpts();
+    void sectionFolders();
+    void sectionNewFile();
+    void sectionSplash();
 };
