@@ -75,7 +75,7 @@ void PrefsAppPanel::sectionFolders()
   btnBackupsPath->setup(tr("Select backups folder"), g.backupDir(), leBackupsPath);;
   layFolders->addWidget(btnBackupsPath, row, col++);
 
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblLogsPath = new AutoLabel(this, tr("Logs"));
   layFolders->addWidget(lblLogsPath, row, col++);
 
@@ -95,7 +95,7 @@ void PrefsAppPanel::sectionFolders()
   layFolders->addWidget(btnLogsPath, row, col++);
 
   /*  TODO implement
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblSDPath = new AutoLabel(this, tr("Models"));
   layFolders->addWidget(lblSDPath, row, col++);
 
@@ -131,7 +131,7 @@ void PrefsAppPanel::sectionGeneral()
   });
   layGeneral->addWidget(chkSplash, row, col++);
 
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblProfPrmpt = new AutoLabel(this, tr("Prompt for radio profile on startup"));
   layGeneral->addWidget(lblProfPrmpt, row, col++);
   chkProfPrmpt = new AutoCheckBox(this);
@@ -141,7 +141,7 @@ void PrefsAppPanel::sectionGeneral()
   });
   layGeneral->addWidget(chkProfPrmpt, row, col++);
 
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblRecentFiles = new AutoLabel(this, tr("Most recently used files"));
   layGeneral->addWidget(lblRecentFiles, row, col++);
   sbxRecentFiles = new AutoSpinBox(this);
@@ -152,7 +152,7 @@ void PrefsAppPanel::sectionGeneral()
   });
   layGeneral->addWidget(sbxRecentFiles, row, col++);
 
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblModelNew = new AutoLabel(this, tr("New models action"));
   layGeneral->addWidget(lblModelNew, row, col++);
   cboModelNew = new AutoComboBox(this);
@@ -164,7 +164,7 @@ void PrefsAppPanel::sectionGeneral()
   layGeneral->addWidget(cboModelNew, row, col++);
 
   //  TODO implement profile level setting as override
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblModelDelete = new AutoLabel(this, tr("B&W remove empty slot on delete)"));
   layGeneral->addWidget(lblModelDelete, row, col++);
   chkModelDelete = new AutoCheckBox(this);
@@ -217,7 +217,7 @@ void PrefsAppPanel::sectionLogging()
   });
   layLogging->addWidget(chkLogApp, row, col++);
 
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblLogFW = new AutoLabel(this, tr("Radio Firmware (in Simulator)"));
   layLogging->addWidget(lblLogFW, row, col++);
 
@@ -243,7 +243,7 @@ void PrefsAppPanel::sectionRadioProfiles()
   });
   layProfiles->addWidget(chkProfileTop, row, col++);
 
-  newRow();
+  ++row; col = 0;
   chkBackupFirmware = new AutoCheckBox(this, tr("Prompt to backup current firmware before flashing new firmware"));
   chkBackupFirmware->setValue(g.enableBackup(), this);
   chkBackupFirmware->setBindSave([this] {
@@ -251,7 +251,7 @@ void PrefsAppPanel::sectionRadioProfiles()
   });
   layProfiles->addWidget(chkBackupFirmware, row, col++);
 
-  newRow();
+  ++row; col = 0;
   chkUseSavedSettings = new AutoCheckBox(this, tr("Use radio settings backup for new models and settings files"));
   chkUseSavedSettings->setValue(g.useSavedSettings(), this);
   chkUseSavedSettings->setBindSave([this] {
@@ -259,7 +259,7 @@ void PrefsAppPanel::sectionRadioProfiles()
   });
   layProfiles->addWidget(chkUseSavedSettings, row, col++);
 
-  newRow();
+  ++row; col = 0;
   chkConfirmDeleteWrite = new AutoCheckBox(this, tr("Do not prompt to delete exisiting models on write to radio or SD path"));
   chkConfirmDeleteWrite->setValue(g.confirmWriteModelsAndSettings(), this);
   chkConfirmDeleteWrite->setBindSave([this] {
@@ -286,7 +286,7 @@ void PrefsAppPanel::sectionSplashScreens()
   });
   laySplash->addWidget(cboSplashLibraries, row, col++);
 
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblSplashUserPath = new AutoLabel(this, tr("User folder"));
   laySplash->addWidget(lblSplashUserPath, row, col++);
 

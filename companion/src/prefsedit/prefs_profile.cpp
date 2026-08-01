@@ -94,15 +94,22 @@ PrefsProfilePanel::~PrefsProfilePanel()
   delete ui;
 }
 
-void PrefsProfilePanel::save()
+QAbstractItemModel * PrefsProfilePanel::firmwareModel()
 {
-  profile.fwOptions(getSelectedOptions().join("-"));
-  AbstractPanel::save();
-}
+  QStandardItemModel * mdl = new QStandardItemModel(this);
 
-void PrefsProfilePanel::update()
-{
-  AbstractPanel::update();
+  foreach(Firmware * firmware, Firmware::getRegisteredFirmwares()) {
+    QStandardItem * item =  new QStandardItem();
+    item->setText(firmware->getName());
+    item->setData(firmware->getId(), Qt::UserRole);
+    mdl->appendRow(item);
+  }
+
+  QSortFilterProxyModel *smdl = new QSortFilterProxyModel(this);
+  smdl->setSourceModel(mdl);
+  smdl->setSortCaseSensitivity(Qt::CaseInsensitive);
+  smdl->sort(0);
+  return smdl;
 }
 
 QString PrefsProfilePanel::getLanguage()
@@ -110,6 +117,36 @@ QString PrefsProfilePanel::getLanguage()
   return !profile.fwLanguage().isEmpty() ?
     profile.fwLanguage() :
     QLocale::languageToString(QLocale().language()).split("_").first();
+}
+
+QStringList PrefsProfilePanel::getSelectedOptions()
+{
+  QStringList opts;
+
+  if (chkFirmwareBuildOpts.size()) {
+    QMutableMapIterator<QString, AutoCheckBox *> it(chkFirmwareBuildOpts);
+
+    while (it.hasNext()) {
+      it.next();
+      AutoCheckBox * chk = it.value();
+
+      if (chk->isChecked())
+        opts.append(it.key());
+    }
+  }
+
+  return opts;
+}
+
+QString PrefsProfilePanel::getSplashFileFilter()
+{
+  QString fmts;
+
+  for (int idx = 0; idx < QImageReader::supportedImageFormats().count(); idx++) {
+    fmts += QLatin1String(" *.") + QImageReader::supportedImageFormats()[idx];
+  }
+
+  return fmts;
 }
 
 QAbstractItemModel * PrefsProfilePanel::languageModel()
@@ -130,33 +167,29 @@ QAbstractItemModel * PrefsProfilePanel::languageModel()
   return smdl;
 }
 
-QAbstractItemModel * PrefsProfilePanel::firmwareModel()
+void PrefsProfilePanel::onOptionChanged(QString name)
 {
-  QStandardItemModel * mdl = new QStandardItemModel(this);
+  AutoCheckBox *chk = chkFirmwareBuildOpts.value(name, nullptr);
 
-  foreach(Firmware * firmware, Firmware::getRegisteredFirmwares()) {
-    QStandardItem * item =  new QStandardItem();
-    item->setText(firmware->getName());
-    item->setData(firmware->getId(), Qt::UserRole);
-    mdl->appendRow(item);
+  if (!(chk && chk->isChecked())) return;
+
+  const Firmware::OptionsList & fwOpts = firmware->getFirmwareBase()->optionGroups();
+
+  // This de-selects any mutually exlusive options (that is, members of the same QList<Option> list).
+  for (const Firmware::OptionsGroup & optGrp : fwOpts) {
+    for (const Firmware::Option & opt : optGrp) {
+      if (name == opt.name) {
+        AutoCheckBox *ochk = nullptr;
+
+        foreach(const Firmware::Option & other, optGrp) {
+          if (other.name != opt.name && (ochk = chkFirmwareBuildOpts.value(other.name, nullptr)))
+            ochk->setValue(false);
+        }
+
+        return;
+      }
+    }
   }
-
-  QSortFilterProxyModel *smdl = new QSortFilterProxyModel(this);
-  smdl->setSourceModel(mdl);
-  smdl->setSortCaseSensitivity(Qt::CaseInsensitive);
-  smdl->sort(0);
-  return smdl;
-}
-
-QString PrefsProfilePanel::getSplashFileFilter()
-{
-  QString fmts;
-
-  for (int idx = 0; idx < QImageReader::supportedImageFormats().count(); idx++) {
-    fmts += QLatin1String(" *.") + QImageReader::supportedImageFormats()[idx];
-  }
-
-  return fmts;
 }
 
 void PrefsProfilePanel::populateFirmwareOptions(QStringList opts)
@@ -202,56 +235,17 @@ void PrefsProfilePanel::populateFirmwareOptions(QStringList opts)
   shrink();
 }
 
-void PrefsProfilePanel::onOptionChanged(QString name)
+void PrefsProfilePanel::save()
 {
-  AutoCheckBox *chk = chkFirmwareBuildOpts.value(name, nullptr);
-
-  if (!(chk && chk->isChecked())) return;
-
-  const Firmware::OptionsList & fwOpts = firmware->getFirmwareBase()->optionGroups();
-
-  // This de-selects any mutually exlusive options (that is, members of the same QList<Option> list).
-  for (const Firmware::OptionsGroup & optGrp : fwOpts) {
-    for (const Firmware::Option & opt : optGrp) {
-      if (name == opt.name) {
-        AutoCheckBox *ochk = nullptr;
-
-        foreach(const Firmware::Option & other, optGrp) {
-          if (other.name != opt.name && (ochk = chkFirmwareBuildOpts.value(other.name, nullptr)))
-            ochk->setValue(false);
-        }
-
-        return;
-      }
-    }
-  }
-}
-
-QStringList PrefsProfilePanel::getSelectedOptions()
-{
-  QStringList opts;
-
-  if (chkFirmwareBuildOpts.size()) {
-    QMutableMapIterator<QString, AutoCheckBox *> it(chkFirmwareBuildOpts);
-
-    while (it.hasNext()) {
-      it.next();
-      AutoCheckBox * chk = it.value();
-
-      if (chk->isChecked())
-        opts.append(it.key());
-    }
-  }
-
-  return opts;
+  profile.fwOptions(getSelectedOptions().join("-"));
+  AbstractPanel::save();
 }
 
 // options  TODO split into those supported by Cloud Build and others
 void PrefsProfilePanel::sectionFirmwareOpts()
 {
+  QGridLayout *layFirmwareOpts = ui->csectFirmwareOpts->start(tr("Firmware Options"));
   row = col = 0;
-  ui->csectFirmwareOpts->setTitle(tr("Firmware Options"));
-  QGridLayout *layFirmwareOpts = new QGridLayout();
 
   // language
   QLabel *lblFirmwareLanguage = new QLabel(tr("Language"), this);
@@ -265,7 +259,7 @@ void PrefsProfilePanel::sectionFirmwareOpts()
   });
   layFirmwareOpts->addWidget(cboFirmwareLanguage, row, col++);
   // other options
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblFirmwareOptions = new AutoLabel(this, tr("Options"));
   layFirmwareOpts->addWidget(lblFirmwareOptions, row, col++, Qt::AlignTop);
 
@@ -273,7 +267,7 @@ void PrefsProfilePanel::sectionFirmwareOpts()
   layFirmwareOpts->addLayout(layFirmwareBuildOpts, row, col++);
   populateFirmwareOptions(profile.fwOptions().split("-", Qt::SkipEmptyParts));
   // flashing
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblFlashingOptions = new AutoLabel(this, tr("Flashing"));
   layFirmwareOpts->addWidget(lblFlashingOptions, row, col++);
 
@@ -283,17 +277,15 @@ void PrefsProfilePanel::sectionFirmwareOpts()
     this->profile.penableBackup(this->chkBackupBeforeFlash->isChecked());
   });
   layFirmwareOpts->addWidget(chkBackupBeforeFlash, row, col++);
-  addHSpring(layFirmwareOpts, col, row);
-  ui->csectFirmwareOpts->setContentLayout(*layFirmwareOpts);
-  ui->csectFirmwareOpts->setBindResize([this] { this->shrink(); });
+
+  ui->csectFirmwareOpts->finish(row, col, [this] { this->shrink(); });
 }
 
 void PrefsProfilePanel::sectionFolders()
 {
+  QGridLayout *layFolders = ui->csectFolders->start(tr("Folders"));
   row = col = 0;
-  ui->csectFolders->setTitle(tr("Folders"));
-  QGridLayout *layFolders = new QGridLayout();
-  // SD Path
+
   AutoLabel *lblSDPath = new AutoLabel(this, tr("SD Path"));
   layFolders->addWidget(lblSDPath, row, col++);
 
@@ -314,7 +306,7 @@ void PrefsProfilePanel::sectionFolders()
   btnSDPath->setup(tr("Select SD path folder"), profile.sdPath(), leSDPath);;
   layFolders->addWidget(btnSDPath, row, col++);
   // Backups path
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblBackupsPath = new AutoLabel(this, tr("Backups"));
   layFolders->addWidget(lblBackupsPath, row, col++);
 
@@ -333,7 +325,7 @@ void PrefsProfilePanel::sectionFolders()
   layFolders->addWidget(btnBackupsPath, row, col++);
 
   /*  TODO implement
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblModelsPath = new AutoLabel(this, tr("Models"));
   layFolders->addWidget(lblModelsPath, row, col++);
 
@@ -352,17 +344,14 @@ void PrefsProfilePanel::sectionFolders()
   layFolders->addWidget(btnModelsPath, row, col++);
  */
 
-  //addHSpring(layFolders, col, row); Do not use as stops folder paths from expanding to available space
-  ui->csectFolders->setContentLayout(*layFolders);
-  ui->csectFolders->setBindResize([this] { this->shrink(); });
+  ui->csectFolders->finish(-1, -1, [this] { this->shrink(); });
 }
 
 void PrefsProfilePanel::sectionNewFile()
 {
+  QGridLayout *layNewFile = ui->csectNewFile->start(tr("New Models and Settings Files"));
   row = col = 0;
-  ui->csectNewFile->setTitle(tr("New Models and Settings Files"));
-  QGridLayout *layNewFile = new QGridLayout();
-  // Use backup settings
+
   AutoLabel *lblUseSettingsBackup = new AutoLabel(this, tr("Use backup settings"));
   layNewFile->addWidget(lblUseSettingsBackup, row, col++);
   chkUseSettingsBackup = new AutoCheckBox(this, " ");
@@ -373,7 +362,7 @@ void PrefsProfilePanel::sectionNewFile()
   chkUseSettingsBackup->setBindPostChanged([this] { this->update(); });
   layNewFile->addWidget(chkUseSettingsBackup, row, col++);
 
-  newRow();
+  ++row; col = 0;
   lblSettingsBackup = new AutoLabel(this);
   lblSettingsBackup->setBindText([this] (){
     if (profile.generalSettings().isEmpty()) {
@@ -389,7 +378,7 @@ void PrefsProfilePanel::sectionNewFile()
   layNewFile->addWidget(lblSettingsBackup, row, 1);
 
   // Stick Mode
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblStickMode = new AutoLabel(this, tr("Default Stick Mode"));
   lblStickMode->setBindEnabled([this] {
     return (!this->chkUseSettingsBackup->isChecked() ||
@@ -413,7 +402,7 @@ void PrefsProfilePanel::sectionNewFile()
   cboStickMode->setBindVisible([this] { return Boards::isAir(); });
   layNewFile->addWidget(cboStickMode, row, col++);
   // Channel Order
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblChannelOrder = new AutoLabel(this, tr("Default Channel Order"));
   lblChannelOrder->setBindEnabled([this] {
     return (!this->chkUseSettingsBackup->isChecked() ||
@@ -435,7 +424,7 @@ void PrefsProfilePanel::sectionNewFile()
   });
   layNewFile->addWidget(cboChannelOrder, row, col++);
   // Internal Module
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblModuleInternal = new AutoLabel(this, tr("Default Internal Module"));
   layNewFile->addWidget(lblModuleInternal, row, col++);
   cboModuleInternal = new AutoComboBox(this);
@@ -446,7 +435,7 @@ void PrefsProfilePanel::sectionNewFile()
   });
   layNewFile->addWidget(cboModuleInternal, row, col++);
   // External Module
-  newRow();
+  ++row; col = 0;
   AutoLabel *lblModuleExternal = new AutoLabel(this, tr("External Module Size"));
   layNewFile->addWidget(lblModuleExternal, row, col++);
 
@@ -458,20 +447,17 @@ void PrefsProfilePanel::sectionNewFile()
   });
   layNewFile->addWidget(cboModuleExternal, row, col++);
 
-  addHSpring(layNewFile, col, row);
-  ui->csectNewFile->setContentLayout(*layNewFile);
-  ui->csectNewFile->setBindResize([this] { this->shrink(); });
+  ui->csectNewFile->finish(row, col, [this] { this->shrink(); });
 }
 
 void PrefsProfilePanel::sectionSplash()
 {
-  row = col = 0;
-  ui->csectSplash->setTitle(tr("Splash Screen"));
+  QGridLayout *laySplash = ui->csectSplash->start(tr("Splash Screen"));
   ui->csectSplash->setBindVisible([this] {
     return !Boards::getCapability(this->board, Board::HasColorLcd);
   });
-  QGridLayout *laySplash = new QGridLayout();
-  // Splash path
+  row = col = 0;
+
   leSplashPath = new AutoLineEdit(this, true);
   leSplashPath->setValue(profile.splashFile(), this);
 
@@ -490,7 +476,7 @@ void PrefsProfilePanel::sectionSplash()
   });
   laySplash->addWidget(btnSplashSelect, row, col++);
   // Splash image
-  newRow();
+  ++row; col = 0;
   imgSplash = new AutoImage(this, leSplashPath->text());
   // change of firmware and thus board can effect the image
   imgSplash->setBindPreUpdate([this] {
@@ -506,9 +492,8 @@ void PrefsProfilePanel::sectionSplash()
     this->leSplashPath->clear();
   });
   laySplash->addWidget(btnSplashClear, row, col++);
-  addHSpring(laySplash, col, row);
-  ui->csectSplash->setContentLayout(*laySplash);
-  ui->csectSplash->setBindResize([this] { this->shrink(); });
+
+  ui->csectSplash->finish(row, col, [this] { this->shrink(); });
 }
 
 void PrefsProfilePanel::undoFirmwareChange()
@@ -517,4 +502,9 @@ void PrefsProfilePanel::undoFirmwareChange()
   board = firmware->getBoard();
   ui->cboRadio->setValue(firmware->getFirmwareBase()->getId());
   populateFirmwareOptions(profile.fwOptions().split("-"));
+}
+
+void PrefsProfilePanel::update()
+{
+  AbstractPanel::update();
 }

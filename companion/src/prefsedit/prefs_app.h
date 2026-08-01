@@ -63,8 +63,6 @@ class PrefsAppPanel : public PrefsPanel
     AutoComboBox *cboSplashLibraries;
     AutoLineEdit *leSplashUserPath;
 
-
-    inline void newRow() { ++row; col = 0; }
     void sectionFolders();
     void sectionGeneral();
     void sectionGoogleEarth();

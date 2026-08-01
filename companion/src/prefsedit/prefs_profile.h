@@ -70,15 +70,12 @@ class PrefsProfilePanel : public PrefsPanel
     QMap<QString, AutoCheckBox *> chkFirmwareBuildOpts;
     AutoCheckBox *chkBackupBeforeFlash;
 
-    inline void newRow() { ++row; col = 0; }
-    QString getLanguage();
-    QAbstractItemModel *languageModel();
     QAbstractItemModel *firmwareModel();
-    void populateFirmwareOptions(QStringList opts = QStringList());
+    QString getLanguage();
     QStringList getSelectedOptions();
     QString getSplashFileFilter();
-    void displayImage(const QString & fileName);
-
+    QAbstractItemModel *languageModel();
+    void populateFirmwareOptions(QStringList opts = QStringList());
     void sectionFirmwareOpts();
     void sectionFolders();
     void sectionNewFile();
