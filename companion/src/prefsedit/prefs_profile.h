@@ -27,7 +27,6 @@ namespace Ui {
   class PrefsProfile;
 }
 
-class FilteredItemModelFactory;
 class Firmware;
 
 class PrefsProfilePanel : public PrefsPanel
