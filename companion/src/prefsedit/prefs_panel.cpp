@@ -26,7 +26,9 @@ PrefsPanel::PrefsPanel(QWidget * parent, Firmware * firmware, Board::Type & boar
   firmware(firmware),
   board(board),
   profile(profile),
-  grid(nullptr)
+  grid(nullptr),
+  row(0),
+  col(0)
 {
 }
 

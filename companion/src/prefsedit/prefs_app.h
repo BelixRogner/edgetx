@@ -40,8 +40,6 @@ class PrefsAppPanel : public PrefsPanel
 
   private:
     Ui::PrefsApp * ui;
-    int row;
-    int col;
 
     AutoCheckBox *chkSplash;
     AutoCheckBox *chkProfPrmpt;

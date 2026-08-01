@@ -53,6 +53,8 @@ class PrefsPanel : public AbstractPanel
     Board::Type board;
     Profile &profile;
     GridLayout *grid;
+    int row;
+    int col;
 };
 
 class PrefsScrollArea : public QScrollArea

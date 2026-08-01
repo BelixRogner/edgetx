@@ -49,8 +49,6 @@ class PrefsProfilePanel : public PrefsPanel
 
   private:
     Ui::PrefsProfile * ui;
-    int row;
-    int col;
 
     AutoCheckBox *chkUseSettingsBackup;
     AutoLabel    *lblSettingsBackup;
