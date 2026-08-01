@@ -45,9 +45,23 @@ class PrefsAppPanel : public PrefsPanel
 
     AutoCheckBox *chkSplash;
     AutoCheckBox *chkProfPrmpt;
-    AutoSpinBox *sbxRecentFiles;
+    AutoSpinBox  *sbxRecentFiles;
     AutoComboBox *cboModelNew;
     AutoCheckBox *chkModelDelete;
+    AutoCheckBox *chkProfileTop;
+    AutoCheckBox *chkBackupFirmware;
+    AutoCheckBox *chkUseSavedSettings;
+    AutoCheckBox *chkConfirmDeleteWrite;
+    AutoLineEdit *leModelsPath;
+    AutoLineEdit *leBackupsPath;
+    AutoLineEdit *leLogsPath;
+    AutoCheckBox *chkLogApp;
+    AutoCheckBox *chkLogFW;
+    AutoComboBox *cboLogLevel;
+    AutoCheckBox *chkLogVerbose;
+    AutoLineEdit *leGoogleExe;
+    AutoComboBox *cboSplashLibraries;
+    AutoLineEdit *leSplashUserPath;
 
 
     inline void newRow() { ++row; col = 0; }

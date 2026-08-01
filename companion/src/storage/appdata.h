@@ -659,6 +659,7 @@ class AppData: public CompStoreObj
     static QStringList updateLogLevelsList() { return { tr("Debug"), tr("Warning"), tr("Critical"), tr("Fatal"), tr("Information") } ; }
     static QStringList simuGenericKeysPosList() { return { tr("Default"), tr("Left"), tr("Right") } ; }
     static QStringList simuBackLightColorList() { return { tr("Blue"), tr("Green"), tr("Red"), tr("Orange"), tr("Yellow") } ; }
+    static QStringList splashLibsList() { return { tr("Only show user splash images"), tr("Show user and companion splash images") } ; }
 
     explicit AppData();
     void init() override;
@@ -770,6 +771,7 @@ class AppData: public CompStoreObj
     PROPERTY    (bool, updDelDownloads,                 false)
     PROPERTY    (bool, updDelDecompress,                false)
     PROPERTYSTR (lastUpdateDir)
+    PROPERTY    (bool, logVerbose,                      false)
 
     PROPERTYSTR (locale)
     PROPERTYSTR (gePath)
