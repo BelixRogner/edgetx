@@ -478,9 +478,9 @@ void PrefsProfilePanel::sectionSplash()
   imgSplash = new AutoImage(this, leSplashPath->text());
   // change of firmware and thus board can effect the image
   imgSplash->setBindPreUpdate([this] {
-    imgSplash->setDimensions(Boards::getCapability(board, Board::LcdWidth),
-                             Boards::getCapability(board, Board::LcdHeight),
-                             Boards::getCapability(board, Board::LcdDepth));
+    imgSplash->setDimensions(Boards::getCapability(this->board, Board::LcdWidth),
+                             Boards::getCapability(this->board, Board::LcdHeight),
+                             Boards::getCapability(this->board, Board::LcdDepth));
   });
   laySplash->addWidget(imgSplash, row, col++);
   // Splash clear
