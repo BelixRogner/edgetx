@@ -23,7 +23,9 @@
 
 AutoSlider::AutoSlider(QWidget * parent):
   QSlider(parent),
-  AutoWidget()
+  AutoWidget(),
+  m_field(nullptr),
+  m_value(0)
 {
   init();
 }
@@ -57,13 +59,27 @@ void AutoSlider::setTick(int interval, QSlider::TickPosition position)
   setTickPosition(position);
 }
 
+void AutoSlider::setValue(int val, int min, int max, AbstractPanel * panel)
+{
+  m_value = val;
+  setFieldInit(min, max, panel);
+}
+
+void AutoSlider::setValue(int val)
+{
+  m_value = val;
+  updateValue();
+}
+
 void AutoSlider::updateValue()
 {
-  if (m_field) {
-    setLock(true);
-    setValue(*m_field);
-    setLock(false);
-  }
+  setLock(true);
+
+  if (m_field)
+    QSlider::setValue(*m_field);
+  else
+    QSlider::setValue(m_value);
+  setLock(false);
 }
 
 void AutoSlider::init()
@@ -81,10 +97,12 @@ void AutoSlider::setFieldInit(int min, int max, AbstractPanel * panel)
 void AutoSlider::onValueChanged(int value)
 {
   if (m_field && !lock()) {
-    if (*m_field != value) {
+    if (*m_field != value)
       *m_field = value;
-      emit currentDataChanged(value);
-      runPostChanged();
-    }
+    else if (m_value != value)
+      m_value = value;
+
+    emit currentDataChanged(value);
+    runPostChanged();
   }
 }

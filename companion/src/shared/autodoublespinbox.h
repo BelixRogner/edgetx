@@ -45,7 +45,9 @@ class AutoDoubleSpinBox : public QDoubleSpinBox, public AutoWidget
     void setField(unsigned int & field, AbstractPanel * panel = nullptr);
     void setDecimals(int prec);
     void setOffset(int offset);
-    void setValue(int val, AbstractPanel * panel = nullptr);
+    // use for widget not bound to a memory address
+    void setValue(int val, AbstractPanel * panel);
+    void setValue(int val);
 
   signals:
     void currentDataChanged(double value);

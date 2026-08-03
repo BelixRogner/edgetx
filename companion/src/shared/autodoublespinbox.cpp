@@ -102,3 +102,9 @@ void AutoDoubleSpinBox::setValue(int val, AbstractPanel * panel)
   setPanel(panel);
   updateValue();
 }
+
+void AutoDoubleSpinBox::setValue(int val)
+{
+  m_value = val;
+  updateValue();
+}
