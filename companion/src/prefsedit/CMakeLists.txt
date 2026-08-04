@@ -7,7 +7,7 @@ set(${PROJECT_NAME}_NAMES
   prefs_app
   prefs_profile
   prefs_simu
-  #prefs_update
+  prefs_update
 )
 
 AddHeadersSources()

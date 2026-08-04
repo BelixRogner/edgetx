@@ -34,17 +34,44 @@ class PrefsUpdatePanel : public PrefsPanel
     Q_OBJECT
 
   public:
-    PrefsUpdatePanel(QWidget * parent, UpdateFactories * factories);
+    PrefsUpdatePanel(QWidget * parent, Firmware * fw, Board::Type & bd, Profile & prof, UpdateFactories * factories);
     virtual ~PrefsUpdatePanel();
 
-    virtual bool save() override;
+    virtual void save() override;
     virtual void update() override;
 
+  public slots:
+    void onSDPathChanged();
+
   private:
-    Ui::PrefsUpdate * ui;
+    Ui::PrefsUpdate *ui;
     UpdateFactories *factories;
-    QLabel *lblName[MAX_COMPONENTS];
-    QCheckBox *chkCheckForUpdate[MAX_COMPONENTS];
-    QComboBox *cboReleaseChannel[MAX_COMPONENTS];
-    QPushButton *btnComponentOptions[MAX_COMPONENTS];
+    // general
+    AutoComboBox   *cboCheckFreq;
+    // folders
+    AutoLineEdit   *leDownloadDir;
+    AutoCheckBox   *chkDecompressDirUseDwnld;
+    AutoLineEdit   *leDecompressDir;
+    AutoCheckBox   *chkUpdateDirUseSD;
+    AutoLineEdit   *leUpdateDir;
+    //components
+    AutoLabel      *lblName[MAX_COMPONENTS];
+    AutoCheckBox   *chkCheckForUpdate[MAX_COMPONENTS];
+    AutoComboBox   *cboReleaseChannel[MAX_COMPONENTS];
+    AutoPushButton *btnComponentOptions[MAX_COMPONENTS];
+    // options
+    AutoCheckBox   *chkDelDownloads;
+    AutoCheckBox   *chkDelDecompress;
+    AutoComboBox   *cboLogLevel;
+    // post update
+    AutoCheckBox   *chkPrmptFlash;
+    AutoCheckBox   *chkPrmptSDSync;
+    AutoCheckBox   *chkPrmptCpnInstall;
+
+    void sectionFolders();
+    void sectionComponents();
+    void sectionOptions();
+    void sectionPostUpdate();
+
+    void loadUpdatesTab();
 };

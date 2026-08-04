@@ -23,7 +23,7 @@
 #include "prefs_profile.h"
 #include "prefs_app.h"
 #include "prefs_simu.h"
-//#include "prefs_update.h"
+#include "prefs_update.h"
 #include "ui_prefs_edit.h"
 #include "helpers.h"
 
@@ -57,10 +57,9 @@ PrefsEditDialog::PrefsEditDialog(QWidget * parent, UpdateFactories * factories) 
   PrefsPanel *simuPanel = addTab(new PrefsSimuPanel(this, firmware, board, profile), tr("Simulator"));
   connect(profPanel, &PrefsPanel::radioChanged, simuPanel, &PrefsPanel::onRadioChanged);
 
-  //PrefsUpdatePanel *prefsUpdatePanel = new PrefsUpdatePanel(this, firmware, board, profile);
-  //PrefsPanel *updatePanel = addTab(prefsUpdatePanel, tr("Update"));
-  //connect(prefsProfPanel, &PrefsProfilePanel::sdPathChanged, prefsUpdatePanel, &PrefsUpdatePanel::onSDPathChanged);
-
+  PrefsUpdatePanel *prefsUpdatePanel = new PrefsUpdatePanel(this, firmware, board, profile, factories);
+  addTab(prefsUpdatePanel, tr("Update"));
+  connect(prefsProfPanel, &PrefsProfilePanel::sdPathChanged, prefsUpdatePanel, &PrefsUpdatePanel::onSDPathChanged);
 
   ui->tabWidget->setCurrentIndex(0);
   shrink();
